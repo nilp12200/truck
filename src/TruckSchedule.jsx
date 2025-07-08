@@ -2592,7 +2592,7 @@ export default function TruckSchedule() {
           )}
 
           {/* Desktop Table */}
-          {!loading && !error && data.length > 0 && (
+           {!loading && !error && data.length > 0 && (
             <div className="hidden md:block overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
@@ -2643,7 +2643,7 @@ export default function TruckSchedule() {
           )}
 
           {/* Mobile Cards */}
-          {!loading && !error && data.length > 0 && (
+         {!loading && !error && data.length > 0 && (
             <div className="block md:hidden space-y-4 p-4">
               {data.map((item, idx) => (
                 <div key={idx} className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
@@ -2666,11 +2666,11 @@ export default function TruckSchedule() {
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Check-In</p>
-                        <p className="text-sm">{formatDateTime(item.checkinTime)}</p> {/* Apply formatDateTime */}
+                        <p className="text-sm">{formatDateTime(item.checkInTime)}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Check-Out</p>
-                        <p className="text-sm">{formatDateTime(item.checkoutTime)}</p> {/* Apply formatDateTime */}
+                        <p className="text-sm">{formatDateTime(item.checkOutTime)}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Quantity</p>
