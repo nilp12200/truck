@@ -3520,35 +3520,43 @@ export default function TruckTransaction() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-8 px-4 sm:px-6">
-        <ToastContainer 
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-      />
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden"
+      <ToastContainer 
+  position="top-right"
+  autoClose={5000}
+  hideProgressBar={false}
+  newestOnTop={false}
+  closeOnClick
+  rtl={false}
+  pauseOnFocusLoss
+  draggable
+  pauseOnHover
+  theme="colored"
+/>
+
+<motion.div 
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3 }}
+  className="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden"
+>
+  {/* Header */}
+  <div className="relative bg-gradient-to-r from-indigo-600 to-purple-700 p-6">
+    <div className="absolute top-4 right-4">
+      <button 
+        onClick={handleClose}
+        className="text-white hover:bg-white/20 p-2 rounded-full transition-all duration-200 hover:scale-110"
+        aria-label="Close"
       >
-        {/* Header */}
-        <div className="relative bg-gradient-to-r from-indigo-600 to-purple-700 p-6">
-          <div className="absolute top-4 right-4">
-            <button 
-              onClick={handleClose}
-              className="text-white hover:bg-white/20 p-2 rounded-full transition-all duration-200 hover:scale-110"
-              aria-label="Close"
-            >
-              <X size={24} />
-            </button>
-          </div>
+        <X size={24} />
+      </button>
+    </div>
+  </div>
+  {/* Content of the motion div */}
+  <div>
+    {/* Your other content goes here */}
+  </div>
+</motion.div>  {/* Properly closing the motion.div */}
+
           
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
