@@ -3263,6 +3263,7 @@ import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 // import CancelButton from './CancelButton';
 import { FiEdit2, FiTrash2, FiPlus, FiSave, FiTruck } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
