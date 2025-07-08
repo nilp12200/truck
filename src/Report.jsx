@@ -1214,6 +1214,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import truckImage from './assets/Truck.png.png';
+import CancelButton from './CancelButton';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -1340,6 +1341,7 @@ export default function Report() {
               </h1>
               <p className="text-blue-100 text-lg">Comprehensive fleet tracking and reporting</p>
             </div>
+                  <CancelButton />
             <div className="mt-6 md:mt-0">
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-white">
                 <div className="text-sm font-medium mb-1">Records Found</div>
