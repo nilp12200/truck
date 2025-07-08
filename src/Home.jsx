@@ -3302,7 +3302,7 @@ export default function Home() {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-xl font-semibold text-gray-800">
-              Hello, {userName}
+              Hello, {loggedInUsername}
             </h1>
             <p className="text-xs text-gray-500 mt-1">
               {currentTime.toLocaleDateString("en-US", {
