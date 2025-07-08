@@ -2618,10 +2618,10 @@ export default function TruckSchedule() {
                         {item.plantName || '—'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDateTime(item.checkinTime)} {/* Ensure this field is in your data */}
+                        {formatDateTime(item.checkInTime)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDateTime(item.checkoutTime)} {/* Ensure this field is in your data */}
+                        {formatDateTime(item.checkOutTime)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {item.loadingSlipNo || '—'}
