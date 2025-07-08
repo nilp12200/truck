@@ -3261,9 +3261,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
-// import CancelButton from './CancelButton';
+import CancelButton from './CancelButton';
 import { FiEdit2, FiTrash2, FiPlus, FiSave, FiTruck } from 'react-icons/fi';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -3443,13 +3442,7 @@ export default function TruckTransaction() {
     }
     return true;
   };
-  const handleClose = () => {
-    if (onClose) {
-      onClose();
-    } else {
-      navigate('/home'); // Navigate to home if no onClose prop provided
-    }
-  };
+
   const handleSubmit = async () => {
     setMessage('');
     if (!validateForm()) return;
@@ -3520,39 +3513,6 @@ export default function TruckTransaction() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-8 px-4 sm:px-6">
-      <ToastContainer 
-  position="top-right"
-  autoClose={5000}
-  hideProgressBar={false}
-  newestOnTop={false}
-  closeOnClick
-  rtl={false}
-  pauseOnFocusLoss
-  draggable
-  pauseOnHover
-  theme="colored"
-/>
-
-
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.3 }}
-  className="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden"
->
-  {/* Header */}
-  <div className="relative bg-gradient-to-r from-indigo-600 to-purple-700 p-6">
-    <div className="absolute top-4 right-4">
-      <button 
-        onClick={handleClose}
-        className="text-white hover:bg-white/20 p-2 rounded-full transition-all duration-200 hover:scale-110"
-        aria-label="Close"
-      >
-        <X size={24} />
-      </button>
-    </div>
-  </div>
- 
-          
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
           <div className="p-6 sm:p-8">
@@ -3564,7 +3524,7 @@ export default function TruckTransaction() {
                 </h1>
                 <p className="text-gray-500 mt-1">Manage truck transportation details</p>
               </div>
-{/*               <CancelButton /> */}
+              <CancelButton />
             </div>
 
             {/* Truck Information Section */}
