@@ -2266,6 +2266,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CancelButton from './CancelButton';
 
+
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function TruckSchedule() {
@@ -2346,7 +2348,7 @@ export default function TruckSchedule() {
       });
       return;
     }
-
+    
     setLoading(true);
     setError('');
     setStatus(st);
@@ -2365,10 +2367,6 @@ export default function TruckSchedule() {
           truckNo: tr || undefined,
         },
       });
-
-      // Debugging: Check if `checkinTime` and `checkoutTime` are present in the response
-      console.log("API Response: ", res.data);
-
       let fetched = res.data;
       if (tr) {
         fetched = fetched.filter(item =>
@@ -2392,9 +2390,9 @@ export default function TruckSchedule() {
   };
 
   const formatDateTime = (dateTimeStr) => {
-    if (!dateTimeStr) return '—';  // If no date is available, show a placeholder
+    if (!dateTimeStr) return '—';
     const date = new Date(dateTimeStr);
-    return date.toLocaleString();  // Formats the date to a readable format
+    return date.toLocaleString();
   };
 
   return (
@@ -2419,11 +2417,11 @@ export default function TruckSchedule() {
               <FiTruck className="text-blue-600" />
               Truck Schedule Dashboard
             </h1>
+          
             <p className="text-gray-600">Track and manage your fleet vehicles</p>
           </div>
         </div>
-
-        <CancelButton />
+              <CancelButton />
 
         {/* Filters Card */}
         <div className="bg-white rounded-xl shadow-md p-4 md:p-6 mb-6 border border-gray-100 backdrop-blur-sm bg-opacity-90">
@@ -2493,7 +2491,7 @@ export default function TruckSchedule() {
               </button>
             </div>
           </div>
-
+          
           {/* Status Filters */}
           <div className="flex flex-wrap gap-2 mb-4">
             {['Dispatched', 'InTransit', 'CheckedOut', 'All'].map(btn => (
@@ -2511,7 +2509,7 @@ export default function TruckSchedule() {
               </button>
             ))}
           </div>
-
+          
           {/* Plant Filter Toggle */}
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm font-medium text-gray-700">Plant Filters</h3>
@@ -2523,7 +2521,7 @@ export default function TruckSchedule() {
               {showPlantFilter ? 'Hide Plants' : 'Show Plants'}
             </button>
           </div>
-
+          
           {/* Plant Selection (Collapsible) */}
           {showPlantFilter && (
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
@@ -2567,7 +2565,7 @@ export default function TruckSchedule() {
               <p className="text-gray-700 font-medium">Loading truck data...</p>
             </div>
           )}
-
+          
           {error && (
             <div className="p-6 text-center">
               <div className="inline-flex items-center justify-center bg-red-100 rounded-full p-3 mb-3">
@@ -2583,7 +2581,7 @@ export default function TruckSchedule() {
               </button>
             </div>
           )}
-
+          
           {!loading && !error && data.length === 0 && (
             <div className="p-8 text-center">
               <div className="inline-flex items-center justify-center bg-blue-100 rounded-full p-4 mb-4">
@@ -2621,10 +2619,10 @@ export default function TruckSchedule() {
                         {item.plantName || '—'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDateTime(item.checkinTime)} {/* Check-In Time */}
+                        {formatDateTime(item.checkInTime)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDateTime(item.checkoutTime)} {/* Check-Out Time */}
+                        {formatDateTime(item.checkOutTime)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {item.loadingSlipNo || '—'}
@@ -2669,11 +2667,11 @@ export default function TruckSchedule() {
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Check-In</p>
-                        <p className="text-sm">{formatDateTime(item.checkinTime)}</p> {/* Apply formatDateTime */}
+                        <p className="text-sm">{formatDateTime(item.checkInTime)}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Check-Out</p>
-                        <p className="text-sm">{formatDateTime(item.checkoutTime)}</p> {/* Apply formatDateTime */}
+                        <p className="text-sm">{formatDateTime(item.checkOutTime)}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Quantity</p>
