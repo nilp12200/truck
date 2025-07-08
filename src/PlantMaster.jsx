@@ -1131,146 +1131,146 @@
 
 
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Pencil, Trash2, Plus, ChevronLeft, Search, X } from 'lucide-react';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { motion } from 'framer-motion';
+// import React, { useState, useEffect } from 'react';
+// import axios from 'axios';
+// import { Pencil, Trash2, Plus, ChevronLeft, Search, X } from 'lucide-react';
+// import { toast, ToastContainer } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
+// import { motion } from 'framer-motion';
 
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
 
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
-};
+// const fadeIn = {
+//   hidden: { opacity: 0, y: 20 },
+//   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+// };
 
-export default function PlantMaster({ onClose }) {
-  const [formData, setFormData] = useState({
-    plantId: null,
-    plantName: '',
-    plantAddress: '',
-    contactPerson: '',
-    mobileNo: '',
-    remarks: ''
-  });
+// export default function PlantMaster({ onClose }) {
+//   const [formData, setFormData] = useState({
+//     plantId: null,
+//     plantName: '',
+//     plantAddress: '',
+//     contactPerson: '',
+//     mobileNo: '',
+//     remarks: ''
+//   });
 
-  const [plantList, setPlantList] = useState([]);
-  const [selectedPlantId, setSelectedPlantId] = useState('');
-  const [editMode, setEditMode] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [existingPlants, setExistingPlants] = useState([]);  // To store fetched plant data
-  const [isPlantNameExist, setIsPlantNameExist] = useState(false);
+//   const [plantList, setPlantList] = useState([]);
+//   const [selectedPlantId, setSelectedPlantId] = useState('');
+//   const [editMode, setEditMode] = useState(false);
+//   const [searchTerm, setSearchTerm] = useState('');
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [existingPlants, setExistingPlants] = useState([]);  // To store fetched plant data
+//   const [isPlantNameExist, setIsPlantNameExist] = useState(false);
 
-  useEffect(() => {
-    fetchPlants();
-  }, []);
+//   useEffect(() => {
+//     fetchPlants();
+//   }, []);
 
-  useEffect(() => {
-  const fetchPlants = async () => {
-    try {
-      const res = await axios.get(`${API_URL}/api/plants`);  // Replace with your actual API URL
-      setExistingPlants(res.data);  // Save the plant data
-    } catch (err) {
-      console.error('Error fetching plants:', err);
-      toast.error('Failed to load plant data');
-    }
-  };
+//   useEffect(() => {
+//   const fetchPlants = async () => {
+//     try {
+//       const res = await axios.get(`${API_URL}/api/plants`);  // Replace with your actual API URL
+//       setExistingPlants(res.data);  // Save the plant data
+//     } catch (err) {
+//       console.error('Error fetching plants:', err);
+//       toast.error('Failed to load plant data');
+//     }
+//   };
   
-  fetchPlants();
-}, []);
+//   fetchPlants();
+// }, []);
   
 
-  const fetchPlants = async () => {
-    setIsLoading(true);
-    try {
-      const res = await axios.get(`${API_URL}/api/plants`);
-      setPlantList(res.data);
-    } catch (err) {
-      console.error('Error fetching plant list:', err);
-      toast.error('Failed to load plants. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+//   const fetchPlants = async () => {
+//     setIsLoading(true);
+//     try {
+//       const res = await axios.get(`${API_URL}/api/plants`);
+//       setPlantList(res.data);
+//     } catch (err) {
+//       console.error('Error fetching plant list:', err);
+//       toast.error('Failed to load plants. Please try again.');
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
 
-  const filteredPlants = plantList.filter(plant => {
-    const plantName = (plant.plantname || plant.plantName || '').toLowerCase();
-    const plantAddress = (plant.plantaddress || plant.plantAddress || '').toLowerCase();
-    return (
-      plantName.includes(searchTerm.toLowerCase()) ||
-      plantAddress.includes(searchTerm.toLowerCase())
-    );
-  });
+//   const filteredPlants = plantList.filter(plant => {
+//     const plantName = (plant.plantname || plant.plantName || '').toLowerCase();
+//     const plantAddress = (plant.plantaddress || plant.plantAddress || '').toLowerCase();
+//     return (
+//       plantName.includes(searchTerm.toLowerCase()) ||
+//       plantAddress.includes(searchTerm.toLowerCase())
+//     );
+//   });
 
-  const handlePlantSelect = (e) => {
-    const id = parseInt(e.target.value, 10);
-    setSelectedPlantId(isNaN(id) ? '' : id);
-  };
+//   const handlePlantSelect = (e) => {
+//     const id = parseInt(e.target.value, 10);
+//     setSelectedPlantId(isNaN(id) ? '' : id);
+//   };
 
-  const handleEditClick = async () => {
-    if (!selectedPlantId) return;
-    setIsLoading(true);
-    try {
-      const res = await axios.get(`${API_URL}/api/plantmaster/${selectedPlantId}`);
-      const data = res.data;
-      if (data?.plantId) {
-        setFormData({
-          plantId: data.plantId,
-          plantName: data.plantName,
-          plantAddress: data.plantAddress,
-          contactPerson: data.contactPerson,
-          mobileNo: data.mobileNo,
-          remarks: data.remarks
-        });
-        setEditMode(true);
-        toast.success('Plant data loaded successfully');
-      }
-    } catch (err) {
-      console.error('Error fetching plant:', err);
-      toast.error('Failed to load plant data');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+//   const handleEditClick = async () => {
+//     if (!selectedPlantId) return;
+//     setIsLoading(true);
+//     try {
+//       const res = await axios.get(`${API_URL}/api/plantmaster/${selectedPlantId}`);
+//       const data = res.data;
+//       if (data?.plantId) {
+//         setFormData({
+//           plantId: data.plantId,
+//           plantName: data.plantName,
+//           plantAddress: data.plantAddress,
+//           contactPerson: data.contactPerson,
+//           mobileNo: data.mobileNo,
+//           remarks: data.remarks
+//         });
+//         setEditMode(true);
+//         toast.success('Plant data loaded successfully');
+//       }
+//     } catch (err) {
+//       console.error('Error fetching plant:', err);
+//       toast.error('Failed to load plant data');
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
 
-  const handleDelete = async (plantId) => {
-    if (window.confirm('Are you sure you want to delete this plant?')) {
-      setIsLoading(true);
-      try {
-        await axios.delete(`${API_URL}/api/plant-master/${plantId}`);
-        fetchPlants();
-        toast.success('Plant deleted successfully');
-      } catch (err) {
-        console.error('Error deleting plant:', err);
-        toast.error('Failed to delete plant');
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
+//   const handleDelete = async (plantId) => {
+//     if (window.confirm('Are you sure you want to delete this plant?')) {
+//       setIsLoading(true);
+//       try {
+//         await axios.delete(`${API_URL}/api/plant-master/${plantId}`);
+//         fetchPlants();
+//         toast.success('Plant deleted successfully');
+//       } catch (err) {
+//         console.error('Error deleting plant:', err);
+//         toast.error('Failed to delete plant');
+//       } finally {
+//         setIsLoading(false);
+//       }
+//     }
+//   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: name === 'plantName' ? value.toUpperCase() : value
-    });
-  };
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData({
+//       ...formData,
+//       [name]: name === 'plantName' ? value.toUpperCase() : value
+//     });
+//   };
 
-  const handleBack = () => {
-    setFormData({
-      plantId: null,
-      plantName: '',
-      plantAddress: '',
-      contactPerson: '',
-      mobileNo: '',
-      remarks: ''
-    });
-    setEditMode(false);
-    setSelectedPlantId('');
-  };
+//   const handleBack = () => {
+//     setFormData({
+//       plantId: null,
+//       plantName: '',
+//       plantAddress: '',
+//       contactPerson: '',
+//       mobileNo: '',
+//       remarks: ''
+//     });
+//     setEditMode(false);
+//     setSelectedPlantId('');
+//   };
 
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
@@ -1298,53 +1298,53 @@ export default function PlantMaster({ onClose }) {
   //   }
   // };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+//  const handleSubmit = async (e) => {
+//   e.preventDefault();
 
-  // Step 1: Check if the plant name is empty
-  if (!formData.plantName.trim()) {
-    toast.error('Plant name is required');
-    return;
-  }
+//   // Step 1: Check if the plant name is empty
+//   if (!formData.plantName.trim()) {
+//     toast.error('Plant name is required');
+//     return;
+//   }
 
-  // Step 2: Check if the plant name already exists (excluding the current plant in case of edit)
-  const isExistingPlant = existingPlants.some(
-    (plant) =>
-      plant.plantName.toLowerCase() === formData.plantName.toLowerCase() &&
-      plant.plantId !== formData.plantId // Allow for the current plant being edited
-  );
+//   // Step 2: Check if the plant name already exists (excluding the current plant in case of edit)
+//   const isExistingPlant = existingPlants.some(
+//     (plant) =>
+//       plant.plantName.toLowerCase() === formData.plantName.toLowerCase() &&
+//       plant.plantId !== formData.plantId // Allow for the current plant being edited
+//   );
 
-  if (isExistingPlant) {
-    toast.error('Plant name already exists');
-    return;
-  }
+//   if (isExistingPlant) {
+//     toast.error('Plant name already exists');
+//     return;
+//   }
 
-  setIsLoading(true);
+//   setIsLoading(true);
   
-  try {
-    // Step 3: Handle creating or updating a plant
-    if (formData.plantId) {
-      await axios.put(`${API_URL}/api/plant-master/${formData.plantId}`, formData);
-      toast.success('Plant updated successfully');
-    } else {
-      await axios.post(`${API_URL}/api/plant-master`, formData);
-      toast.success('Plant created successfully');
-    }
+//   try {
+//     // Step 3: Handle creating or updating a plant
+//     if (formData.plantId) {
+//       await axios.put(`${API_URL}/api/plant-master/${formData.plantId}`, formData);
+//       toast.success('Plant updated successfully');
+//     } else {
+//       await axios.post(`${API_URL}/api/plant-master`, formData);
+//       toast.success('Plant created successfully');
+//     }
 
-    // Step 4: Refresh the list of plants and navigate back
-    fetchPlants();
-    handleBack();
+//     // Step 4: Refresh the list of plants and navigate back
+//     fetchPlants();
+//     handleBack();
 
-  } catch (err) {
-    console.error('Error saving plant:', err);
-    toast.error('Failed to save plant');
-  } finally {
-    setIsLoading(false);
-  }
-};
+//   } catch (err) {
+//     console.error('Error saving plant:', err);
+//     toast.error('Failed to save plant');
+//   } finally {
+//     setIsLoading(false);
+//   }
+// };
 
 
-  return (
+//   return (
 //     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-6">
 //       <ToastContainer 
 //         position="top-right"
