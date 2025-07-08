@@ -3220,7 +3220,7 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-gray-50 font-sans">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
+{/*           <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">
                 Welcome back, <span className="text-blue-600"> {loggedInUsername}</span>
@@ -3236,7 +3236,25 @@ export default function Home() {
                 </span>
               </div>
             </div>
-          </header>
+          </header> */}
+              <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
+  <div>
+    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">
+      Welcome back, <span className="text-blue-600">{userName}</span>
+    </h1>
+    <p className="text-gray-500">
+      {formatDate(currentTime)} • {formatTime(currentTime)}
+    </p>
+  </div>
+  <div className="flex items-center gap-4">
+    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-200">
+      <span className="text-blue-600 font-medium">
+        {userName.charAt(0).toUpperCase()}
+      </span>
+    </div>
+  </div>
+</header>
+
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {allowedPanels.map((panel, index) => (
