@@ -3533,7 +3533,7 @@ export default function TruckTransaction() {
   theme="colored"
 />
 
-<motion.div 
+
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ duration: 0.3 }}
@@ -3551,12 +3551,7 @@ export default function TruckTransaction() {
       </button>
     </div>
   </div>
-  {/* Content of the motion div */}
-  <div>
-    {/* Your other content goes here */}
-  </div>
-</motion.div>  {/* Properly closing the motion.div */}
-
+ 
           
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
