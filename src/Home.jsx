@@ -3235,7 +3235,7 @@ export default function Home() {
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-200">
                 <span className="text-blue-600 font-medium">
-                  {userName.charAt(0).toUpperCase()}
+                  {loggedInUsername.charAt(0).toUpperCase()}
                 </span>
               </div>
             </div>
