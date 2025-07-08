@@ -3223,7 +3223,7 @@ export default function Home() {
           <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">
-                Welcome back, <span className="text-blue-600">{userName}</span>
+                Welcome back, <span className="text-blue-600"> {loggedInUsername}</span>
               </h1>
               <p className="text-gray-500">
                 {formatDate(currentTime)} • {formatTime(currentTime)}
