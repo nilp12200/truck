@@ -3039,6 +3039,7 @@
 
 
 
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -3058,8 +3059,6 @@ export default function Home() {
   const userName = localStorage.getItem("userName") || "User";
   const loggedInUsername = localStorage.getItem('username');
   const [currentTime, setCurrentTime] = useState(new Date());
-
-      
 
   useEffect(() => {
     const handleResize = () => {
@@ -3226,7 +3225,7 @@ export default function Home() {
           <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">
-                Welcome back, <span className="text-blue-600"> {loggedInUsername}</span>
+                Welcome back, <span className="text-blue-600">{loggedInUsername}</span>
               </h1>
               <p className="text-gray-500">
                 {formatDate(currentTime)} • {formatTime(currentTime)}
@@ -3240,8 +3239,6 @@ export default function Home() {
               </div>
             </div>
           </header>
-           
-
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {allowedPanels.map((panel, index) => (
@@ -3353,5 +3350,5 @@ export default function Home() {
       </nav>
     </div>
   );
-}  //my fully working code this in finla niche vali design hai
+}  //my fully workin //my fully working code this in finla niche vali design hai
 
