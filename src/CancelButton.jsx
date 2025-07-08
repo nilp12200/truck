@@ -28,7 +28,7 @@ export default function CancelButton() {
     <div className="flex justify-end mb-4">
       <button
         onClick={() => navigate('/home')}
-        className="text-white bg-gradient-to-r from-red-500 to-red-700 hover:bg-gradient-to-r hover:from-red-700 hover:to-red-500 transition-all duration-300 ease-in-out rounded-full w-12 h-12 flex items-center justify-center text-xl font-bold shadow-lg transform hover:scale-105 focus:outline-none"
+        className="text-red-600 bg-white hover:bg-red-100 hover:text-red-700 rounded-full w-12 h-12 flex items-center justify-center text-xl font-bold shadow-md border-2 border-red-600 transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none"
         title="Cancel"
       >
         &times;
@@ -36,5 +36,6 @@ export default function CancelButton() {
     </div>
   );
 }
+
 
 
