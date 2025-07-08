@@ -2262,260 +2262,281 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FiTruck, FiCalendar, FiFilter, FiSearch, FiCheckCircle, FiXCircle, FiRefreshCw } from 'react-icons/fi';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import truckImage from './assets/Truck.png.png';
 import CancelButton from './CancelButton';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export default function Report() {
+export default function TruckSchedule() {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
+  const [status, setStatus] = useState('All');
+  const [truckSearch, setTruckSearch] = useState('');
+  const [plantList, setPlantList] = useState([]);
   const [selectedPlants, setSelectedPlants] = useState([]);
-  const [plants, setPlants] = useState([]);
-  const [reportData, setReportData] = useState([]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [error, setError] = useState('');
+  const [showPlantFilter, setShowPlantFilter] = useState(false);
 
   useEffect(() => {
-    const fetchPlants = async () => {
-      const userId = localStorage.getItem('userId');
-      const role = localStorage.getItem('role');
-      const allowedPlantsRaw = localStorage.getItem('allowedPlants') || '';
-      const allowedPlants = allowedPlantsRaw.split(',').map(p => p.trim()).filter(Boolean);
+    const userId = localStorage.getItem('userId');
+    const role = localStorage.getItem('role');
+    const allowedPlantsRaw = localStorage.getItem('allowedPlants') || '';
+    const allowedPlants = allowedPlantsRaw.split(',').map(p => p.trim()).filter(Boolean);
 
-      try {
-        const { data } = await axios.get(`${API_URL}/api/plants`, {
-          headers: { userid: userId, role }
-        });
-        const filtered = data.filter(plant => {
-          const pid = String(plant.plantid || '');
-          return allowedPlants.includes(pid) || role?.toLowerCase() === 'admin';
-        });
-        setPlants(filtered);
-        setSelectedPlants(filtered.map(p => String(p.plantid)));
-      } catch {
-        toast.error('Failed to load plant data', {
-          position: "top-right",
-          autoClose: 3000,
-          theme: "colored"
-        });
-      }
-    };
-
-    fetchPlants();
+    axios.get(`${API_URL}/api/plants`, {
+      headers: { userid: userId, role }
+    })
+    .then(res => {
+      const filtered = res.data.filter(plant => {
+        const pid = String(plant.plantid || '');
+        return allowedPlants.includes(pid) || role?.toLowerCase() === 'admin';
+      });
+      setPlantList(filtered);
+      setSelectedPlants(filtered.map(p => p.plantid.toString()));
+      toast.success('Plants loaded successfully', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+      });
+    })
+    .catch(() => {
+      setError('Failed to load plants');
+      toast.error('Failed to load plants', {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    });
   }, []);
 
-  const togglePlant = id =>
+  const togglePlant = (id) => {
     setSelectedPlants(prev =>
       prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
     );
+    toast.info('Plant selection updated', {
+      position: "top-right",
+      autoClose: 1500,
+    });
+  };
 
-  const selectAll = () => setSelectedPlants(plants.map(p => String(p.plantid)));
-  const deselectAll = () => setSelectedPlants([]);
+  const selectAll = () => {
+    setSelectedPlants(plantList.map(p => p.plantid.toString()));
+    toast.success('All plants selected', {
+      position: "top-right",
+      autoClose: 1500,
+    });
+  };
 
-  const fetchReport = async () => {
-    if (!fromDate || !toDate) {
-      toast.warn('Please select both date ranges', {
+  const deselectAll = () => {
+    setSelectedPlants([]);
+    toast.info('All plants deselected', {
+      position: "top-right",
+      autoClose: 1500,
+    });
+  };
+
+  const fetchData = async (st, tr = '') => {
+    if (!fromDate || !toDate || selectedPlants.length === 0) {
+      setError('Please select all filters');
+      toast.error('Please select all filters', {
         position: "top-right",
         autoClose: 3000,
-        theme: "colored"
       });
       return;
     }
-    if (selectedPlants.length === 0) {
-      toast.warn('Please select at least one plant', {
-        position: "top-right",
-        autoClose: 3000,
-        theme: "colored"
-      });
-      return;
-    }
-
+    
     setLoading(true);
+    setError('');
+    setStatus(st);
+    toast.info('Fetching truck data...', {
+      position: "top-right",
+      autoClose: 1000,
+    });
+
     try {
-      const { data } = await axios.get(`${API_URL}/api/truck-report`, {
-        params: { fromDate, toDate, plant: JSON.stringify(selectedPlants) }
+      const res = await axios.get(`${API_URL}/api/truck-schedule`, {
+        params: {
+          fromDate,
+          toDate,
+          status: st,
+          plant: JSON.stringify(selectedPlants),
+          truckNo: tr || undefined,
+        },
       });
-      setReportData(data);
-      if (data.length === 0) {
-        toast.info('No records found for selected filters', {
-          position: "top-right",
-          autoClose: 3000,
-          theme: "colored"
-        });
+      let fetched = res.data;
+      if (tr) {
+        fetched = fetched.filter(item =>
+          item.truckNo?.toLowerCase().includes(tr.toLowerCase())
+        );
       }
+      setData(fetched);
+      toast.success(`Loaded ${fetched.length} trucks`, {
+        position: "top-right",
+        autoClose: 2000,
+      });
     } catch {
-      toast.error('Failed to generate report', {
+      setError('Failed to fetch data');
+      toast.error('Failed to fetch truck data', {
         position: "top-right",
         autoClose: 3000,
-        theme: "colored"
       });
-      setReportData([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const formatDateTime = dateStr => {
-    if (!dateStr) return '—';
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) return '—';
-    return date.toLocaleString('en-US', { 
-      month: 'short', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  const formatDateTime = (dateTimeStr) => {
+    if (!dateTimeStr) return '—';
+    const date = new Date(dateTimeStr);
+    return date.toLocaleString();
   };
 
-  const filteredData = reportData.filter(row => 
-    row.truckNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    row.plantName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    row.loadingSlipNo?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Format for real-time or current time
+  const formatRealTime = (time) => {
+    if (!time) return '—';
+    const now = new Date();
+    const timeDiff = now - new Date(time); // Difference from the real-time
+    const formattedTime = new Date(time);
+    return `${formattedTime.toLocaleDateString()} ${formattedTime.toLocaleTimeString()}`;
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-8">
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 p-4 md:p-6">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       
-      {/* Main Container */}
       <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-xl overflow-hidden mb-8">
-          <div className="p-6 md:p-8 flex flex-col md:flex-row items-center">
-            <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-                <img src={truckImage} alt="Truck" className="h-16 md:h-20 inline-block mr-3" />
-                Truck Movement Analytics
-              </h1>
-              <p className="text-blue-100 text-lg">Comprehensive fleet tracking and reporting</p>
-            </div>
-                  
-            <div className="mt-6 md:mt-0">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-white">
-                <div className="text-sm font-medium mb-1">Records Found</div>
-                <div className="text-2xl font-bold">{reportData.length}</div>
-              </div>
-            </div>
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-2">
+              <FiTruck className="text-blue-600" />
+              Truck Schedule Dashboard
+            </h1>
+            <p className="text-gray-600">Track and manage your fleet vehicles</p>
           </div>
         </div>
+        
         <CancelButton />
 
-        {/* Filters Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-              <svg className="w-6 h-6 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-              </svg>
-              Filter Parameters
-            </h2>
-            <div className="mt-4 md:mt-0 w-full md:w-auto">
+        {/* Filters Card */}
+        <div className="bg-white rounded-xl shadow-md p-4 md:p-6 mb-6 border border-gray-100 backdrop-blur-sm bg-opacity-90">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div className="space-y-1">
+              <label className="block text-sm font-medium text-gray-700">From Date</label>
               <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiCalendar className="text-gray-400" />
+                </div>
+                <input
+                  type="date"
+                  value={fromDate}
+                  onChange={e => setFromDate(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-sm font-medium text-gray-700">To Date</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiCalendar className="text-gray-400" />
+                </div>
+                <input
+                  type="date"
+                  value={toDate}
+                  onChange={e => setToDate(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-sm font-medium text-gray-700">Truck Number</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiSearch className="text-gray-400" />
+                </div>
                 <input
                   type="text"
-                  placeholder="Search records..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full md:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Search truck..."
+                  value={truckSearch}
+                  onChange={e => setTruckSearch(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
-                <svg className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
               </div>
+            </div>
+
+            <div className="flex items-end">
+              <button
+                onClick={() => fetchData(status, truckSearch)}
+                className="w-full md:w-auto bg-blue-600 text-white rounded-lg px-6 py-2 flex items-center gap-2 justify-center"
+              >
+                <FiSearch /> Search
+              </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Date Filters */}
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">From Date</label>
-                <div className="relative">
-                  <input
-                    type="date"
-                    value={fromDate}
-                    onChange={e => setFromDate(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">To Date</label>
-                <div className="relative">
-                  <input
-                    type="date"
-                    value={toDate}
-                    onChange={e => setToDate(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  />
-                </div>
-              </div>
+          <div className="mt-4">
+            <div>
+              <button
+                onClick={selectAll}
+                className="bg-blue-600 text-white rounded-lg px-4 py-2"
+              >
+                Select All Plants
+              </button>
+              <button
+                onClick={deselectAll}
+                className="bg-red-600 text-white rounded-lg px-4 py-2 ml-4"
+              >
+                Deselect All Plants
+              </button>
             </div>
-
-            {/* Plant Selection */}
-            <div className="md:col-span-2">
-              <div className="flex justify-between items-center mb-2">
-                <button onClick={selectAll} className="text-indigo-600 hover:text-indigo-800">Select All</button>
-                <button onClick={deselectAll} className="text-indigo-600 hover:text-indigo-800">Deselect All</button>
-              </div>
-              <div className="space-y-2">
-                {plants.map(plant => (
-                  <div key={plant.plantid} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id={plant.plantid}
-                      checked={selectedPlants.includes(String(plant.plantid))}
-                      onChange={() => togglePlant(String(plant.plantid))}
-                      className="form-checkbox text-indigo-600"
-                    />
-                    <label htmlFor={plant.plantid} className="ml-2">{plant.plantName}</label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 text-center">
-            <button
-              onClick={fetchReport}
-              className="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700"
-            >
-              Generate Report
-            </button>
           </div>
         </div>
 
-        {/* Report Table Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
-          <div className="overflow-x-auto">
-            <table className="min-w-full table-auto">
-              <thead>
+        {/* Truck Data Table */}
+        <div className="overflow-hidden bg-white shadow-md rounded-lg border border-gray-100">
+          {loading ? (
+            <div className="p-6 text-center">Loading...</div>
+          ) : error ? (
+            <div className="p-6 text-center text-red-600">{error}</div>
+          ) : (
+            <table className="min-w-full bg-white border-collapse">
+              <thead className="bg-gray-100">
                 <tr>
-                  <th className="px-6 py-3 text-left">Truck No</th>
-                  <th className="px-6 py-3 text-left">Plant Name</th>
-                  <th className="px-6 py-3 text-left">Loading Slip No</th>
-                  <th className="px-6 py-3 text-left">Check-In Time</th>
-                  <th className="px-6 py-3 text-left">Check-Out Time</th>
+                  <th className="px-6 py-4 text-left">Truck Number</th>
+                  <th className="px-6 py-4 text-left">Check-In</th>
+                  <th className="px-6 py-4 text-left">Check-Out</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredData.map((row, index) => (
-                  <tr key={index} className="border-t">
-                    <td className="px-6 py-4">{row.truckNo}</td>
-                    <td className="px-6 py-4">{row.plantName}</td>
-                    <td className="px-6 py-4">{row.loadingSlipNo}</td>
-                    <td className="px-6 py-4">{formatDateTime(row.checkInTime)}</td>
-                    <td className="px-6 py-4">{formatDateTime(row.checkOutTime)}</td>
+                {data.map(item => (
+                  <tr key={item.truckNo} className="border-b">
+                    <td className="px-6 py-4 text-sm text-gray-700">{item.truckNo}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{formatRealTime(item.checkInTime)}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{formatRealTime(item.checkOutTime)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
