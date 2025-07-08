@@ -1738,17 +1738,18 @@ export default function PlantMaster({ onClose }) {
 
 
 
-
-
-
-
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import { motion } from 'framer-motion';
-import { X, ChevronLeft, Plus, Pencil, Trash2, Search } from 'react-feather';  // Add any necessary imports
+import { X, ChevronLeft, Plus, Pencil, Trash2, Search } from 'react-feather';
 
-const PlantMaster = () => {
+const API_URL = "your-api-url-here"; // Replace with your actual API URL
+
+const PlantMaster = ({ plantList, fetchPlants, onClose }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedPlantId, setSelectedPlantId] = useState(null);
   const [formData, setFormData] = useState({
     plantName: '',
     contactPerson: '',
@@ -1757,51 +1758,39 @@ const PlantMaster = () => {
     remarks: '',
     plantId: null,
   });
-
-  const [existingPlants, setExistingPlants] = useState([]); // Stores existing plant data
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [plantList, setPlantList] = useState([]);
-  const [filteredPlants, setFilteredPlants] = useState([]);
   const [editMode, setEditMode] = useState(false);
-  const [selectedPlantId, setSelectedPlantId] = useState(null);
 
-  const API_URL = 'your-api-url-here'; // Your API URL
-
-  useEffect(() => {
-    const fetchPlants = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/api/plant-master`);
-        setExistingPlants(res.data);  // Store the plants in a state
-        setPlantList(res.data);
-        setFilteredPlants(res.data);
-      } catch (err) {
-        console.error('Error fetching plants:', err);
-        toast.error('Failed to load plant data');
-      }
-    };
-
-    fetchPlants();
-  }, []);
-
-  useEffect(() => {
-    // Filter plants based on search term
-    setFilteredPlants(
-      plantList.filter((plant) =>
-        (plant.plantName || plant.plantname)
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      )
-    );
-  }, [searchTerm, plantList]);
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  // Check if the plant name already exists
+  const isPlantNameExists = (plantName) => {
+    return plantList.some(plant => plant.plantName.toLowerCase() === plantName.toLowerCase());
   };
 
+  // Handle form data change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  // Handle plant selection for editing
+  const handleEditClick = () => {
+    const selectedPlant = plantList.find(plant => plant.plantId === selectedPlantId);
+    if (selectedPlant) {
+      setFormData({
+        plantName: selectedPlant.plantName,
+        contactPerson: selectedPlant.contactPerson,
+        plantAddress: selectedPlant.plantAddress,
+        mobileNo: selectedPlant.mobileNo,
+        remarks: selectedPlant.remarks,
+        plantId: selectedPlant.plantId,
+      });
+      setEditMode(true);
+    }
+  };
+
+  // Handle back button click
   const handleBack = () => {
     setEditMode(false);
     setFormData({
@@ -1814,53 +1803,34 @@ const PlantMaster = () => {
     });
   };
 
-  const handleEditClick = () => {
-    const selectedPlant = plantList.find(
-      (plant) => plant.plantId === selectedPlantId
-    );
-    setFormData({
-      ...selectedPlant,
-    });
-    setEditMode(true);
-  };
-
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Step 1: Check if the plant name is empty
     if (!formData.plantName.trim()) {
       toast.error('Plant name is required');
       return;
     }
 
-    // Step 2: Check if the plant name already exists (excluding the current plant being edited)
-    const isExistingPlant = existingPlants.some(
-      (plant) =>
-        plant.plantName.toLowerCase() === formData.plantName.toLowerCase() &&
-        plant.plantId !== formData.plantId // Allow for the current plant being edited
-    );
-
-    if (isExistingPlant) {
+    // Check if plant name already exists
+    if (isPlantNameExists(formData.plantName)) {
       toast.error('Plant name already exists');
       return;
     }
 
     setIsLoading(true);
-
     try {
-      // Step 3: Handle creating or updating a plant
       if (formData.plantId) {
+        // Update plant
         await axios.put(`${API_URL}/api/plant-master/${formData.plantId}`, formData);
         toast.success('Plant updated successfully');
       } else {
+        // Create new plant
         await axios.post(`${API_URL}/api/plant-master`, formData);
         toast.success('Plant created successfully');
       }
-
-      // Step 4: Refresh the list of plants and navigate back
       fetchPlants();
       handleBack();
-
     } catch (err) {
       console.error('Error saving plant:', err);
       toast.error('Failed to save plant');
@@ -1868,6 +1838,16 @@ const PlantMaster = () => {
       setIsLoading(false);
     }
   };
+
+  // Handle plant selection in dropdown
+  const handlePlantSelect = (e) => {
+    setSelectedPlantId(e.target.value);
+  };
+
+  // Filtered plants based on search term
+  const filteredPlants = plantList.filter((plant) =>
+    plant.plantName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-6">
@@ -1883,7 +1863,7 @@ const PlantMaster = () => {
         pauseOnHover
         theme="colored"
       />
-
+      
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -1893,9 +1873,9 @@ const PlantMaster = () => {
         {/* Header */}
         <div className="relative bg-gradient-to-r from-blue-600 to-indigo-700 p-6">
           <div className="absolute top-4 right-4">
-            {!editMode && (
+            {!editMode && onClose && (
               <button 
-                onClick={handleBack}
+                onClick={onClose}
                 className="text-white hover:bg-white/20 p-2 rounded-full transition-all duration-200 hover:scale-110"
                 aria-label="Close"
               >
@@ -1903,7 +1883,7 @@ const PlantMaster = () => {
               </button>
             )}
           </div>
-
+          
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               {editMode && (
@@ -1942,149 +1922,168 @@ const PlantMaster = () => {
                     </div>
                     <input
                       type="text"
-                      placeholder="Search plants by name or address..."
+                      placeholder="Search plants by name..."
                       className="pl-10 w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition duration-200 bg-white/80 backdrop-blur-sm"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    {searchTerm && (
-                      <button
-                        onClick={() => setSearchTerm('')}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-blue-600 transition-colors duration-200"
-                      >
-                        <svg className="h-5 w-5 text-gray-400 hover:text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    )}
                   </div>
                 </div>
                 <div className="flex space-x-3">
                   <select
                     value={selectedPlantId}
-                    onChange={(e) => setSelectedPlantId(e.target.value)}
-                    className="flex-1 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm appearance-none bg-white bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiAjdjQgdjUwIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBvbHlsaW5lIHBvaW50cz0iNiA5IDEyIDE1IDE4IDkiPjwvcG9seWxpbmU+PC9zdmc+')] bg-no-repeat bg-[center_right_12px]" 
+                    onChange={handlePlantSelect}
+                    className="flex-1 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm appearance-none bg-white bg-[url('data:image/svg+xml;base64,...')] bg-no-repeat bg-[center_right_1rem]"
                   >
-                    {/* Add options dynamically */}
                     <option value="">Select Plant</option>
-                    {filteredPlants.map((plant) => (
-                      <option key={plant.plantId} value={plant.plantId}>
-                        {plant.plantName}
+                    {plantList.map((plant) => (
+                      <option key={plant.plantid || plant.plantId} value={plant.plantid || plant.plantId}>
+                        {(plant.plantname || plant.plantName)?.toUpperCase()}
                       </option>
                     ))}
                   </select>
+                  <button
+                    onClick={handleEditClick}
+                    disabled={!selectedPlantId || isLoading}
+                    className={`p-3 rounded-lg flex items-center transition-all duration-200 ${selectedPlantId && !isLoading ? 'bg-yellow-500 hover:bg-yellow-600 text-white shadow-md hover:shadow-lg hover:scale-105' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+                    title="Edit selected plant"
+                  >
+                    <Pencil size={18} />
+                  </button>
                 </div>
               </div>
 
-              {/* Plant List */}
-              <div className="overflow-x-auto shadow-md rounded-lg">
-                <table className="min-w-full text-sm text-left text-gray-500">
-                  <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3">Plant Name</th>
-                      <th className="px-6 py-3">Address</th>
-                      <th className="px-6 py-3">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredPlants.map((plant) => (
-                      <tr key={plant.plantId} className="border-b hover:bg-gray-100">
-                        <td className="px-6 py-4">{plant.plantName}</td>
-                        <td className="px-6 py-4">{plant.plantAddress}</td>
-                        <td className="px-6 py-4">
-                          <button
-                            onClick={() => handleEditClick(plant.plantId)}
-                            className="text-blue-600 hover:bg-blue-50 p-2 rounded-full"
-                          >
-                            <Pencil size={16} />
-                          </button>
-                          <button
-                            onClick={() => deletePlant(plant.plantId)} // Add your delete function
-                            className="text-red-600 hover:bg-red-50 p-2 rounded-full ml-2"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="flex justify-between items-center mb-6">
+                <motion.button
+                  onClick={() => setEditMode(true)}
+                  disabled={isLoading}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-4 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  <Plus size={18} />
+                  <span>Add New Plant</span>
+                </motion.button>
               </div>
+
+              {/* Loading State */}
+              {isLoading && (
+                <div className="flex justify-center items-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                </div>
+              )}
+
+              {/* Plant List - Desktop */}
+              {filteredPlants.length > 0 && (
+                <div className="space-y-3">
+                  {filteredPlants.map((plant) => (
+                    <motion.div
+                      key={plant.plantid || plant.plantId}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      transition={{ duration: 0.3 }}
+                      className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md hover:scale-105 hover:shadow-lg transition-all duration-200"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <span className="font-semibold">{plant.plantname || plant.plantName}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button className="text-yellow-600 hover:text-yellow-800">
+                          <Pencil size={20} />
+                        </button>
+                        <button className="text-red-600 hover:text-red-800">
+                          <Trash2 size={20} />
+                        </button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </>
           ) : (
-            <form onSubmit={handleSubmit}>
-              <div className="space-y-4">
-                <div className="flex flex-col space-y-2">
-                  <label className="font-semibold">Plant Name</label>
-                  <input
-                    type="text"
-                    name="plantName"
-                    value={formData.plantName}
-                    onChange={handleChange}
-                    className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
-                  />
+            <div>
+              <form onSubmit={handleSubmit}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="plantName" className="text-sm font-semibold text-gray-700">Plant Name</label>
+                    <input
+                      type="text"
+                      name="plantName"
+                      id="plantName"
+                      value={formData.plantName}
+                      onChange={handleChange}
+                      required
+                      className="mt-2 p-3 w-full border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="contactPerson" className="text-sm font-semibold text-gray-700">Contact Person</label>
+                    <input
+                      type="text"
+                      name="contactPerson"
+                      id="contactPerson"
+                      value={formData.contactPerson}
+                      onChange={handleChange}
+                      className="mt-2 p-3 w-full border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="plantAddress" className="text-sm font-semibold text-gray-700">Plant Address</label>
+                    <input
+                      type="text"
+                      name="plantAddress"
+                      id="plantAddress"
+                      value={formData.plantAddress}
+                      onChange={handleChange}
+                      className="mt-2 p-3 w-full border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="mobileNo" className="text-sm font-semibold text-gray-700">Mobile No</label>
+                    <input
+                      type="text"
+                      name="mobileNo"
+                      id="mobileNo"
+                      value={formData.mobileNo}
+                      onChange={handleChange}
+                      className="mt-2 p-3 w-full border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="remarks" className="text-sm font-semibold text-gray-700">Remarks</label>
+                    <textarea
+                      name="remarks"
+                      id="remarks"
+                      value={formData.remarks}
+                      onChange={handleChange}
+                      className="mt-2 p-3 w-full border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                    />
+                  </div>
                 </div>
 
-                <div className="flex flex-col space-y-2">
-                  <label className="font-semibold">Contact Person</label>
-                  <input
-                    type="text"
-                    name="contactPerson"
-                    value={formData.contactPerson}
-                    onChange={handleChange}
-                    className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
-                  />
-                </div>
-
-                <div className="flex flex-col space-y-2">
-                  <label className="font-semibold">Address</label>
-                  <textarea
-                    name="plantAddress"
-                    value={formData.plantAddress}
-                    onChange={handleChange}
-                    className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
-                  />
-                </div>
-
-                <div className="flex flex-col space-y-2">
-                  <label className="font-semibold">Mobile No</label>
-                  <input
-                    type="text"
-                    name="mobileNo"
-                    value={formData.mobileNo}
-                    onChange={handleChange}
-                    className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
-                  />
-                </div>
-
-                <div className="flex flex-col space-y-2">
-                  <label className="font-semibold">Remarks</label>
-                  <textarea
-                    name="remarks"
-                    value={formData.remarks}
-                    onChange={handleChange}
-                    className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
-                  />
-                </div>
-
-                <div className="flex justify-end space-x-4 mt-6">
+                <div className="mt-6 flex space-x-4">
                   <button
                     type="button"
                     onClick={handleBack}
-                    className="px-6 py-2 text-sm bg-gray-200 rounded-md hover:bg-gray-300 transition-all duration-200"
+                    className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-3 rounded-lg w-full transition-all duration-200"
                   >
                     Cancel
                   </button>
-
                   <button
                     type="submit"
-                    className="px-6 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all duration-200"
+                    disabled={isLoading}
+                    className={`w-full p-3 rounded-lg text-white transition-all duration-200 ${isLoading ? 'bg-blue-300' : 'bg-blue-600 hover:bg-blue-700'}`}
                   >
-                    {isLoading ? 'Saving...' : 'Save'}
+                    {isLoading ? 'Submitting...' : 'Save'}
                   </button>
                 </div>
-              </div>
-            </form>
+              </form>
+            </div>
           )}
         </div>
       </motion.div>
@@ -2093,4 +2092,3 @@ const PlantMaster = () => {
 };
 
 export default PlantMaster;
-      
