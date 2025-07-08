@@ -3056,7 +3056,10 @@ export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
   const userRole = localStorage.getItem("userRole");
   const userName = localStorage.getItem("userName") || "User";
+  const loggedInUsername = localStorage.getItem('username');
   const [currentTime, setCurrentTime] = useState(new Date());
+
+      
 
   useEffect(() => {
     const handleResize = () => {
