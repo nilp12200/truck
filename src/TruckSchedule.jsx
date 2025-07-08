@@ -2267,7 +2267,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CancelButton from './CancelButton';
 
-
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function TruckSchedule() {
@@ -2389,10 +2388,25 @@ export default function TruckSchedule() {
     }
   };
 
+  // Function to format check-in and check-out times
   const formatDateTime = (dateTimeStr) => {
     if (!dateTimeStr) return '—';
+    
     const date = new Date(dateTimeStr);
-    return date.toLocaleString();
+    if (isNaN(date)) return 'Invalid Date'; // Handle invalid date formats
+
+    const options = {
+      weekday: 'short', // e.g., Mon, Tue, etc.
+      year: 'numeric',
+      month: 'short', // Jan, Feb, etc.
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true, // 12-hour format with AM/PM
+    };
+
+    return date.toLocaleString('en-US', options);
   };
 
   return (
@@ -2419,7 +2433,7 @@ export default function TruckSchedule() {
             </h1>
             <p className="text-gray-600">Track and manage your fleet vehicles</p>
           </div>
-             <CancelButton />
+          <CancelButton />
         </div>
 
         {/* Filters Card */}
@@ -2483,210 +2497,89 @@ export default function TruckSchedule() {
                   </>
                 ) : (
                   <>
-                    <FiSearch />
-                    Search Trucks
+                    <FiFilter />
+                    Apply Filters
                   </>
                 )}
               </button>
             </div>
           </div>
-          
-          {/* Status Filters */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            {['Dispatched', 'InTransit', 'CheckedOut', 'All'].map(btn => (
-              <button
-                key={btn}
-                onClick={() => fetchData(btn, truckSearch)}
-                className={`px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-1 transition-all duration-200 ${
-                  status === btn
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {status === btn ? <FiCheckCircle className="text-white" /> : <FiCheckCircle className="text-gray-500" />}
-                {btn}
+        </div>
+
+        {/* Plant Filter Button */}
+        <div className="flex justify-between items-center mb-4">
+          <button
+            onClick={() => setShowPlantFilter(prev => !prev)}
+            className="text-blue-600 hover:text-blue-800 font-semibold"
+          >
+            {showPlantFilter ? 'Hide' : 'Show'} Plant Filters
+          </button>
+
+          {/* Show Plant Selection */}
+          {showPlantFilter && (
+            <div className="flex gap-2">
+              <button onClick={selectAll} className="bg-blue-500 text-white py-1 px-3 rounded-md">
+                Select All
               </button>
+              <button onClick={deselectAll} className="bg-red-500 text-white py-1 px-3 rounded-md">
+                Deselect All
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Plant List */}
+        {showPlantFilter && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+            {plantList.map(plant => (
+              <div
+                key={plant.plantid}
+                className={`flex items-center gap-2 p-2 border rounded-lg cursor-pointer transition-all ${
+                  selectedPlants.includes(String(plant.plantid)) ? 'bg-blue-100' : 'bg-white'
+                }`}
+                onClick={() => togglePlant(plant.plantid.toString())}
+              >
+                <FiCheckCircle
+                  className={`text-green-600 ${
+                    selectedPlants.includes(String(plant.plantid)) ? 'block' : 'hidden'
+                  }`}
+                />
+                <FiXCircle
+                  className={`text-red-600 ${
+                    !selectedPlants.includes(String(plant.plantid)) ? 'block' : 'hidden'
+                  }`}
+                />
+                <span className="text-sm">{plant.plantname}</span>
+              </div>
             ))}
           </div>
-          
-          {/* Plant Filter Toggle */}
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-sm font-medium text-gray-700">Plant Filters</h3>
-            <button
-              onClick={() => setShowPlantFilter(!showPlantFilter)}
-              className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
-            >
-              <FiFilter />
-              {showPlantFilter ? 'Hide Plants' : 'Show Plants'}
-            </button>
-          </div>
-          
-          {/* Plant Selection (Collapsible) */}
-          {showPlantFilter && (
-            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <div className="flex gap-2 mb-3">
-                <button
-                  onClick={selectAll}
-                  className="px-3 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 transition-colors"
-                >
-                  Select All
-                </button>
-                <button
-                  onClick={deselectAll}
-                  className="px-3 py-1 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition-colors"
-                >
-                  Deselect All
-                </button>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-60 overflow-y-auto p-1">
-                {plantList.map(p => (
-                  <label key={p.plantid} className="flex items-center gap-2 text-sm p-2 hover:bg-blue-50 rounded transition-colors">
-                    <input
-                      type="checkbox"
-                      checked={selectedPlants.includes(p.plantid.toString())}
-                      onChange={() => togglePlant(p.plantid.toString())}
-                      className="rounded text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="truncate">{p.plantname}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+        )}
 
-        {/* Results Section */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 backdrop-blur-sm bg-opacity-90">
-          {/* Loading/Error States */}
-          {loading && (
-            <div className="p-8 flex flex-col items-center justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-              <p className="text-gray-700 font-medium">Loading truck data...</p>
-            </div>
-          )}
-          
-          {error && (
-            <div className="p-6 text-center">
-              <div className="inline-flex items-center justify-center bg-red-100 rounded-full p-3 mb-3">
-                <FiXCircle className="text-red-500 text-2xl" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-1">{error}</h3>
-              <p className="text-gray-600">Please try again or check your filters</p>
-              <button
-                onClick={() => fetchData(status, truckSearch)}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Retry
-              </button>
-            </div>
-          )}
-          
-          {!loading && !error && data.length === 0 && (
-            <div className="p-8 text-center">
-              <div className="inline-flex items-center justify-center bg-blue-100 rounded-full p-4 mb-4">
-                <FiTruck className="text-blue-500 text-3xl" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-1">No trucks found</h3>
-              <p className="text-gray-600">Adjust your search criteria and try again</p>
-            </div>
-          )}
-
-          {/* Desktop Table */}
-          {!loading && !error && data.length > 0 && (
-            <div className="hidden md:block overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    {['Truck No', 'Plant', 'Check-In', 'Check-Out', 'Slip', 'Qty', 'Freight', 'Priority'].map((header) => (
-                      <th
-                        key={header}
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        {header}
-                      </th>
-                    ))}
+        {/* Schedule Table */}
+        {data.length > 0 && (
+          <div className="overflow-x-auto bg-white rounded-lg shadow-md">
+            <table className="min-w-full table-auto text-sm text-gray-700">
+              <thead>
+                <tr className="bg-blue-100 text-gray-600">
+                  <th className="px-6 py-3 text-left">Truck No</th>
+                  <th className="px-6 py-3 text-left">Plant</th>
+                  <th className="px-6 py-3 text-left">Check In</th>
+                  <th className="px-6 py-3 text-left">Check Out</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((item, idx) => (
+                  <tr key={idx} className="border-t hover:bg-gray-50">
+                    <td className="px-6 py-4">{item.truckNo}</td>
+                    <td className="px-6 py-4">{item.plantname}</td>
+                    <td className="px-6 py-4">{formatDateTime(item.checkInTime)}</td>
+                    <td className="px-6 py-4">{formatDateTime(item.checkOutTime)}</td>
                   </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {data.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-blue-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 uppercase">
-                        {item.truckNo || '—'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {item.plantName || '—'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDateTime(item.checkInTime)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDateTime(item.checkOutTime)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {item.loadingSlipNo || '—'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {item.qty || '—'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {item.freight || '—'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {item.priority || '—'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {/* Mobile Cards */}
-          {!loading && !error && data.length > 0 && (
-            <div className="block md:hidden space-y-4 p-4">
-              {data.map((item, idx) => (
-                <div key={idx} className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="p-4 space-y-2">
-                    <div className="flex justify-between items-start">
-                      <h3 className="text-lg font-bold text-blue-600 uppercase">{item.truckNo || '—'}</h3>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {item.priority || 'Standard'}
-                      </span>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <p className="text-xs text-gray-500">Plant</p>
-                        <p className="text-sm font-medium">{item.plantName || '—'}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Slip No</p>
-                        <p className="text-sm font-medium">{item.loadingSlipNo || '—'}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Check-In</p>
-                        <p className="text-sm">{formatDateTime(item.checkInTime)}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Check-Out</p>
-                        <p className="text-sm">{formatDateTime(item.checkOutTime)}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Quantity</p>
-                        <p className="text-sm font-medium">{item.qty || '—'}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Freight</p>
-                        <p className="text-sm font-medium">{item.freight || '—'}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
