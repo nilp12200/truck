@@ -2618,10 +2618,10 @@ export default function TruckSchedule() {
                         {item.plantName || '—'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDateTime(item.checkInTime)}
+                        {formatDateTime(raw.checkInTime)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDateTime(item.checkOutTime)}
+                        {formatDateTime(raw.checkOutTime)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {item.loadingSlipNo || '—'}
@@ -2666,11 +2666,11 @@ export default function TruckSchedule() {
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Check-In</p>
-                        <p className="text-sm">{formatDateTime(item.checkInTime)}</p>
+                        <p className="text-sm">{formatDateTime(raw.checkInTime)}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Check-Out</p>
-                        <p className="text-sm">{formatDateTime(item.checkOutTime)}</p>
+                        <p className="text-sm">{formatDateTime(raw.checkOutTime)}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Quantity</p>
