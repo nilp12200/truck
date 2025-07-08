@@ -2265,7 +2265,7 @@ import axios from 'axios';
 import { FiTruck, FiCalendar, FiFilter, FiSearch, FiCheckCircle, FiXCircle, FiRefreshCw } from 'react-icons/fi';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import CancelButton from './CancelButton';
 
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -2419,6 +2419,7 @@ export default function TruckSchedule() {
             </h1>
             <p className="text-gray-600">Track and manage your fleet vehicles</p>
           </div>
+             <CancelButton />
         </div>
 
         {/* Filters Card */}
