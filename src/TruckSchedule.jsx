@@ -2258,9 +2258,7 @@
 //       </div>
 //     </div>
 //   );
-// }
-
-import React, { useState, useEffect } from 'react';
+// }import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiTruck, FiCalendar, FiFilter, FiSearch, FiCheckCircle, FiXCircle, FiRefreshCw } from 'react-icons/fi';
 import { ToastContainer, toast } from 'react-toastify';
@@ -2592,7 +2590,7 @@ export default function TruckSchedule() {
           )}
 
           {/* Desktop Table */}
-           {!loading && !error && data.length > 0 && (
+          {!loading && !error && data.length > 0 && (
             <div className="hidden md:block overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
@@ -2618,10 +2616,10 @@ export default function TruckSchedule() {
                         {item.plantName || '—'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDateTime(item.checkInTime)}
+                        {formatDateTime(item.checkinTime)} {/* Apply formatDateTime to checkinTime */}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDateTime(item.checkOutTime)}
+                        {formatDateTime(item.checkoutTime)} {/* Apply formatDateTime to checkoutTime */}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {item.loadingSlipNo || '—'}
@@ -2666,11 +2664,11 @@ export default function TruckSchedule() {
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Check-In</p>
-                        <p className="text-sm">{formatDateTime(item.checkInTime)}</p>
+                        <p className="text-sm">{formatDateTime(item.checkinTime)}</p> {/* Apply formatDateTime */}
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Check-Out</p>
-                        <p className="text-sm">{formatDateTime(item.checkOutTime)}</p>
+                        <p className="text-sm">{formatDateTime(item.checkoutTime)}</p> {/* Apply formatDateTime */}
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Quantity</p>
@@ -2691,4 +2689,3 @@ export default function TruckSchedule() {
     </div>
   );
 }
-
