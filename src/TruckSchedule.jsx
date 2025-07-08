@@ -2365,6 +2365,10 @@ export default function TruckSchedule() {
           truckNo: tr || undefined,
         },
       });
+
+      // Debugging: Check if `checkinTime` and `checkoutTime` are present in the response
+      console.log("API Response: ", res.data);
+
       let fetched = res.data;
       if (tr) {
         fetched = fetched.filter(item =>
@@ -2617,10 +2621,10 @@ export default function TruckSchedule() {
                         {item.plantName || '—'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDateTime(item.checkinTime)} {/* Apply formatDateTime to checkinTime */}
+                        {formatDateTime(item.checkinTime)} {/* Check-In Time */}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDateTime(item.checkoutTime)} {/* Apply formatDateTime to checkoutTime */}
+                        {formatDateTime(item.checkoutTime)} {/* Check-Out Time */}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {item.loadingSlipNo || '—'}
@@ -2642,7 +2646,7 @@ export default function TruckSchedule() {
           )}
 
           {/* Mobile Cards */}
-         {!loading && !error && data.length > 0 && (
+          {!loading && !error && data.length > 0 && (
             <div className="block md:hidden space-y-4 p-4">
               {data.map((item, idx) => (
                 <div key={idx} className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
