@@ -3039,332 +3039,598 @@
 
 
 
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import {
-  MdOutlineWarehouse,
-  MdOutlineDashboard,
-  MdOutlineAnalytics,
-} from "react-icons/md";
-import { FiSearch, FiClock } from "react-icons/fi";
-import { BsDoorOpen, BsCalendarCheck, BsBoxSeam, BsShieldLock } from "react-icons/bs";
-import { PiPackageLight } from "react-icons/pi";
-import { RiTruckLine, RiUserSettingsLine } from "react-icons/ri";
-import { HiOutlineUserGroup } from "react-icons/hi";
+// import { useEffect, useState } from "react";
+// import { Link } from "react-router-dom";
+// import {
+//   MdOutlineWarehouse,
+//   MdOutlineDashboard,
+//   MdOutlineAnalytics,
+// } from "react-icons/md";
+// import { FiSearch, FiClock } from "react-icons/fi";
+// import { BsDoorOpen, BsCalendarCheck, BsBoxSeam, BsShieldLock } from "react-icons/bs";
+// import { PiPackageLight } from "react-icons/pi";
+// import { RiTruckLine, RiUserSettingsLine } from "react-icons/ri";
+// import { HiOutlineUserGroup } from "react-icons/hi";
 
-export default function Home() {
-  const [isMobile, setIsMobile] = useState(false);
-  const userRole = localStorage.getItem("userRole");
-  const userName = localStorage.getItem("userName") || "User";
-  const [currentTime, setCurrentTime] = useState(new Date());
+// export default function Home() {
+//   const [isMobile, setIsMobile] = useState(false);
+//   const userRole = localStorage.getItem("userRole");
+//   const userName = localStorage.getItem("userName") || "User";
+//   const [currentTime, setCurrentTime] = useState(new Date());
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+//   useEffect(() => {
+//     const handleResize = () => {
+//       setIsMobile(window.innerWidth <= 768);
+//     };
 
-    handleResize();
-    window.addEventListener("resize", handleResize);
+//     handleResize();
+//     window.addEventListener("resize", handleResize);
 
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000);
+//     const timer = setInterval(() => {
+//       setCurrentTime(new Date());
+//     }, 60000);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      clearInterval(timer);
-    };
-  }, []);
+//     return () => {
+//       window.removeEventListener("resize", handleResize);
+//       clearInterval(timer);
+//     };
+//   }, []);
 
-  const panelList = [
-    {
-      name: "Dashboard",
-      path: "/dashboard",
-      icon: <MdOutlineDashboard size={24} />,
-      roles: ["Owner", "Admin", "Dispatch", "GateKeeper", "Loader", "Report"],
-      color: "bg-blue-100",
-      iconColor: "text-blue-600",
-      navIcon: <MdOutlineDashboard size={20} />,
-      description: "Overview of all operations"
-    },
-    {
-      name: "Plant Master",
-      path: "/plantmaster",
-      icon: <MdOutlineWarehouse size={24} />,
-      roles: ["Owner", "Admin","Plantmaster"],
-      color: "bg-indigo-100",
-      iconColor: "text-indigo-600",
-      navIcon: <MdOutlineWarehouse size={20} />,
-      description: "Manage plant locations"
-    },
-    {
-      name: "User Master",
-      path: "/usermaster",
-      icon: <RiUserSettingsLine size={24} />,
-      roles: ["Owner", "Admin","UserMaster"],
-      color: "bg-teal-100",
-      iconColor: "text-teal-600",
-      navIcon: <RiUserSettingsLine size={20} />,
-      description: "Manage system users"
-    },
-    {
-      name: "User Register",
-      path: "/userregister",
-      icon: <BsShieldLock size={24} />,
-      roles: ["Owner", "Admin","UserRegister"],
-      color: "bg-cyan-100",
-      iconColor: "text-cyan-600",
-      navIcon: <BsShieldLock size={20} />,
-      description: "Register new users"
-    },
-    {
-      name: "Truck Transaction",
-      path: "/truck",
-      icon: <RiTruckLine size={24} />,
-      roles: ["Owner", "Admin", "Dispatch"],
-      color: "bg-orange-100",
-      iconColor: "text-orange-600",
-      navIcon: <RiTruckLine size={20} />,
-      description: "Manage truck movements"
-    },
-    {
-      name: "Truck Finder",
-      path: "/truckfind",
-      icon: <FiSearch size={24} />,
-      roles: ["Owner", "Admin", "Dispatch"],
-      color: "bg-red-100",
-      iconColor: "text-red-600",
-      navIcon: <FiSearch size={20} />,
-      description: "Track truck locations"
-    },
-    {
-      name: "Gate Keeper",
-      path: "/gate",
-      icon: <BsDoorOpen size={24} />,
-      roles: ["Owner", "Admin", "GateKeeper"],
-      color: "bg-purple-100",
-      iconColor: "text-purple-600",
-      navIcon: <BsDoorOpen size={20} />,
-      description: "Control gate access"
-    },
-    {
-      name: "Loading",
-      path: "/loader",
-      icon: <PiPackageLight size={24} />,
-      roles: ["Owner", "Admin", "Loader"],
-      color: "bg-amber-100",
-      iconColor: "text-amber-600",
-      navIcon: <PiPackageLight size={20} />,
-      description: "Manage loading operations"
-    },
-    {
-      name: "General Report",
-      path: "/reports",
-      icon: <MdOutlineAnalytics size={24} />,
-      roles: ["Owner", "Admin", "Report"],
-      color: "bg-green-100",
-      iconColor: "text-green-600",
-      navIcon: <MdOutlineAnalytics size={20} />,
-      description: "View operational reports"
-    },
-    {
-      name: "Truck Schedule",
-      path: "/truckshedule",
-      icon: <BsCalendarCheck size={24} />,
-      roles: ["Owner", "Admin", "Report"],
-      color: "bg-pink-100",
-      iconColor: "text-pink-600",
-      navIcon: <BsCalendarCheck size={20} />,
-      description: "View truck schedules"
-    },
+//   const panelList = [
+//     {
+//       name: "Dashboard",
+//       path: "/dashboard",
+//       icon: <MdOutlineDashboard size={24} />,
+//       roles: ["Owner", "Admin", "Dispatch", "GateKeeper", "Loader", "Report"],
+//       color: "bg-blue-100",
+//       iconColor: "text-blue-600",
+//       navIcon: <MdOutlineDashboard size={20} />,
+//       description: "Overview of all operations"
+//     },
+//     {
+//       name: "Plant Master",
+//       path: "/plantmaster",
+//       icon: <MdOutlineWarehouse size={24} />,
+//       roles: ["Owner", "Admin","Plantmaster"],
+//       color: "bg-indigo-100",
+//       iconColor: "text-indigo-600",
+//       navIcon: <MdOutlineWarehouse size={20} />,
+//       description: "Manage plant locations"
+//     },
+//     {
+//       name: "User Master",
+//       path: "/usermaster",
+//       icon: <RiUserSettingsLine size={24} />,
+//       roles: ["Owner", "Admin","UserMaster"],
+//       color: "bg-teal-100",
+//       iconColor: "text-teal-600",
+//       navIcon: <RiUserSettingsLine size={20} />,
+//       description: "Manage system users"
+//     },
+//     {
+//       name: "User Register",
+//       path: "/userregister",
+//       icon: <BsShieldLock size={24} />,
+//       roles: ["Owner", "Admin","UserRegister"],
+//       color: "bg-cyan-100",
+//       iconColor: "text-cyan-600",
+//       navIcon: <BsShieldLock size={20} />,
+//       description: "Register new users"
+//     },
+//     {
+//       name: "Truck Transaction",
+//       path: "/truck",
+//       icon: <RiTruckLine size={24} />,
+//       roles: ["Owner", "Admin", "Dispatch"],
+//       color: "bg-orange-100",
+//       iconColor: "text-orange-600",
+//       navIcon: <RiTruckLine size={20} />,
+//       description: "Manage truck movements"
+//     },
+//     {
+//       name: "Truck Finder",
+//       path: "/truckfind",
+//       icon: <FiSearch size={24} />,
+//       roles: ["Owner", "Admin", "Dispatch"],
+//       color: "bg-red-100",
+//       iconColor: "text-red-600",
+//       navIcon: <FiSearch size={20} />,
+//       description: "Track truck locations"
+//     },
+//     {
+//       name: "Gate Keeper",
+//       path: "/gate",
+//       icon: <BsDoorOpen size={24} />,
+//       roles: ["Owner", "Admin", "GateKeeper"],
+//       color: "bg-purple-100",
+//       iconColor: "text-purple-600",
+//       navIcon: <BsDoorOpen size={20} />,
+//       description: "Control gate access"
+//     },
+//     {
+//       name: "Loading",
+//       path: "/loader",
+//       icon: <PiPackageLight size={24} />,
+//       roles: ["Owner", "Admin", "Loader"],
+//       color: "bg-amber-100",
+//       iconColor: "text-amber-600",
+//       navIcon: <PiPackageLight size={20} />,
+//       description: "Manage loading operations"
+//     },
+//     {
+//       name: "General Report",
+//       path: "/reports",
+//       icon: <MdOutlineAnalytics size={24} />,
+//       roles: ["Owner", "Admin", "Report"],
+//       color: "bg-green-100",
+//       iconColor: "text-green-600",
+//       navIcon: <MdOutlineAnalytics size={20} />,
+//       description: "View operational reports"
+//     },
+//     {
+//       name: "Truck Schedule",
+//       path: "/truckshedule",
+//       icon: <BsCalendarCheck size={24} />,
+//       roles: ["Owner", "Admin", "Report"],
+//       color: "bg-pink-100",
+//       iconColor: "text-pink-600",
+//       navIcon: <BsCalendarCheck size={20} />,
+//       description: "View truck schedules"
+//     },
     
   
-  ];
+//   ];
 
-  // Filter panels based on user role
-  const allowedPanels = panelList.filter((panel) => {
-    if (!userRole) return false;
-    const userRoles = userRole.split(",").map((r) => r.trim().toLowerCase());
-    return (
-      userRoles.some((role) =>
-       panel.roles.map((r) => r.toLowerCase()).includes(role)
-     ) && ["/dashboard", "/truck", "/reports", "/gate", "/loader", "/truckfind","/plantmaster",,"/userregister","/usermaster","/truckshedule"].includes(panel.path)
-    );
+//   // Filter panels based on user role
+//   const allowedPanels = panelList.filter((panel) => {
+//     if (!userRole) return false;
+//     const userRoles = userRole.split(",").map((r) => r.trim().toLowerCase());
+//     return (
+//       userRoles.some((role) =>
+//        panel.roles.map((r) => r.toLowerCase()).includes(role)
+//      ) && ["/dashboard", "/truck", "/reports", "/gate", "/loader", "/truckfind","/plantmaster",,"/userregister","/usermaster","/truckshedule"].includes(panel.path)
+//     );
+//   });
+
+//   // Filter navigation items for mobile bottom bar
+//   const allowedNavItems = panelList.filter((panel) => {
+//     if (!userRole) return false;
+//     const userRoles = userRole.split(",").map((r) => r.trim().toLowerCase());
+//     return (
+//       userRoles.some((role) =>
+//         panel.roles.map((r) => r.toLowerCase()).includes(role)
+//       ) && ["/dashboard", "/truck", "/reports", "/gate", "/loader", "/truckfind","/plantmaster","/userregister","/usermaster","/truckshedule"].includes(panel.path)
+//     );
+//   });
+
+//   const formatTime = (date) => {
+//     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+//   };
+
+//   const formatDate = (date) => {
+//     return date.toLocaleDateString("en-US", {
+//       weekday: "long",
+//       month: "long",
+//       day: "numeric",
+//     });
+//   };
+
+//   // Desktop view
+//   if (!isMobile) {
+//     return (
+//       <div className="min-h-screen bg-gray-50 font-sans">
+//         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+// {/*           <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
+//             <div>
+//               <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">
+//                 Welcome back, <span className="text-blue-600"> {loggedInUsername}</span>
+//               </h1>
+//               <p className="text-gray-500">
+//                 {formatDate(currentTime)} • {formatTime(currentTime)}
+//               </p>
+//             </div>
+//             <div className="flex items-center gap-4">
+//               <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-200">
+//                 <span className="text-blue-600 font-medium">
+//                   {userName.charAt(0).toUpperCase()}
+//                 </span>
+//               </div>
+//             </div>
+//           </header> */}
+//               <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
+//   <div>
+//     <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">
+//       Welcome back, <span className="text-blue-600">{userName}</span>
+//     </h1>
+//     <p className="text-gray-500">
+//       {formatDate(currentTime)} • {formatTime(currentTime)}
+//     </p>
+//   </div>
+//   <div className="flex items-center gap-4">
+//     <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-200">
+//       <span className="text-blue-600 font-medium">
+//         {userName.charAt(0).toUpperCase()}
+//       </span>
+//     </div>
+//   </div>
+// </header>
+
+
+//           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+//             {allowedPanels.map((panel, index) => (
+//               <Link
+//                 to={panel.path}
+//                 key={index}
+//                 className="group relative no-underline focus:outline-none transition-transform hover:-translate-y-1"
+//               >
+//                 <div className="h-full rounded-xl p-6 bg-white shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 hover:border-blue-100 flex flex-col">
+//                   <div
+//                     className={`w-14 h-14 rounded-xl mb-5 flex items-center justify-center ${panel.color} transition-transform duration-300 group-hover:scale-110`}
+//                   >
+//                     <div className={`${panel.iconColor} transition-colors group-hover:text-blue-600`}>{panel.icon}</div>
+//                   </div>
+//                   <h3 className="text-lg font-semibold text-gray-800 mb-1">
+//                     {panel.name}
+//                   </h3>
+//                   <p className="text-sm text-gray-500 mb-4">{panel.description}</p>
+//                   <div className="mt-auto flex justify-between items-center">
+//                     <span className="text-xs font-medium px-2 py-1 rounded bg-gray-50 text-gray-500">
+//                       Access module
+//                     </span>
+//                     <div className="text-gray-300 group-hover:text-blue-400 transition-colors">
+//                       <svg
+//                         width="20"
+//                         height="20"
+//                         viewBox="0 0 24 24"
+//                         fill="none"
+//                         xmlns="http://www.w3.org/2000/svg"
+//                       >
+//                         <path
+//                           d="M9 18L15 12L9 6"
+//                           stroke="currentColor"
+//                           strokeWidth="2"
+//                           strokeLinecap="round"
+//                           strokeLinejoin="round"
+//                         />
+//                       </svg>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </Link>
+//             ))}
+//           </div>
+
+//           <footer className="mt-16 pt-8 border-t border-gray-200 text-center text-sm text-gray-500">
+//             <p>Lemon Logistics ERP • v2.5 • {new Date().getFullYear()}</p>
+//           </footer>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   // Mobile View
+//   return (
+//     <div className="min-h-screen bg-gray-50 pb-20 font-sans">
+//       <main className="p-4">
+//         <div className="flex justify-between items-center mb-6">
+//           <div>
+//             <h1 className="text-xl font-semibold text-gray-800">
+//               Hello, {userName}
+//             </h1>
+//             <p className="text-xs text-gray-500 mt-1">
+//               {currentTime.toLocaleDateString("en-US", {
+//                 weekday: "short",
+//                 month: "short",
+//                 day: "numeric",
+//               })}
+//             </p>
+//           </div>
+//           <div className="text-sm font-medium text-gray-700 bg-white rounded-full px-3 py-1 shadow-sm border border-gray-200">
+//             {formatTime(currentTime)}
+//           </div>
+//         </div>
+
+//         <div className="grid grid-cols-2 gap-3">
+//           {allowedPanels.map((panel, idx) => (
+//             <Link
+//               to={panel.path}
+//               key={idx}
+//               className="no-underline active:scale-95 transition-transform focus:outline-none"
+//             >
+//               <div className="bg-white rounded-xl p-4 shadow-sm h-full flex flex-col items-center border border-gray-100">
+//                 <div
+//                   className={`w-14 h-14 rounded-xl ${panel.color} flex items-center justify-center mb-3`}
+//                 >
+//                   <div className={panel.iconColor}>{panel.icon}</div>
+//                 </div>
+//                 <span className="text-sm font-medium text-gray-700 text-center">
+//                   {panel.name}
+//                 </span>
+//               </div>
+//             </Link>
+//           ))}
+//         </div>
+//       </main>
+
+//       <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 flex justify-around items-center p-2 shadow-lg">
+//         {allowedNavItems.map((item, index) => (
+//           <Link
+//             to={item.path}
+//             key={index}
+//             className="p-2 rounded-full text-gray-500 active:text-gray-700 transition-colors focus:outline-none"
+//             aria-label={item.name}
+//           >
+//             <div className={`p-2 ${item.iconColor}`}>{item.navIcon}</div>
+//           </Link>
+//         ))}
+//       </nav>
+//     </div>
+//   );
+// }  //my fully working code this in finla niche vali design hai
+
+export default function UserMaster({ onClose }) {
+  const [mounted, setMounted] = useState(false);
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+    contactNumber: '',
+    moduleRights: [],
+    allowedPlants: [],
   });
+  const [plantList, setPlantList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  // Filter navigation items for mobile bottom bar
-  const allowedNavItems = panelList.filter((panel) => {
-    if (!userRole) return false;
-    const userRoles = userRole.split(",").map((r) => r.trim().toLowerCase());
-    return (
-      userRoles.some((role) =>
-        panel.roles.map((r) => r.toLowerCase()).includes(role)
-      ) && ["/dashboard", "/truck", "/reports", "/gate", "/loader", "/truckfind","/plantmaster","/userregister","/usermaster","/truckshedule"].includes(panel.path)
-    );
-  });
+  const loggedInUsername = localStorage.getItem('username');
+  const loggedInRole = localStorage.getItem('userRole');
 
-  const formatTime = (date) => {
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  // Ensure fallback for username and role if not found
+  const usernameDisplay = loggedInUsername || 'Guest';
+  const roleDisplay = loggedInRole || 'Unknown Role';
+
+  useEffect(() => {
+    setMounted(true);
+
+    const roles = (loggedInRole || '').split(',').map(r => r.trim().toLowerCase());
+    if (!roles.includes('admin') && !roles.includes('owner') && !roles.includes('usermaster')) {
+      toast.error('You are not authorized to create users');
+      handleClose();
+      return;
+    }
+
+    fetchPlants();
+
+    return () => setMounted(false);
+  }, [loggedInRole]);
+
+  const fetchPlants = async () => {
+    console.log('Fetching plants...');
+    try {
+      const res = await axios.get(`${API_URL}/api/plants`);
+      console.log('Plants data:', res.data);
+      setPlantList(res.data);
+    } catch (err) {
+      console.error('Error fetching plants:', err);
+      toast.error('Failed to load plant list');
+    }
   };
 
-  const formatDate = (date) => {
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-    });
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' 
+        ? checked
+          ? [...prev[name], value]
+          : prev[name].filter(item => item !== value)
+        : value
+    }));
   };
 
-  // Desktop view
-  if (!isMobile) {
-    return (
-      <div className="min-h-screen bg-gray-50 font-sans">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-{/*           <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">
-                Welcome back, <span className="text-blue-600"> {loggedInUsername}</span>
-              </h1>
-              <p className="text-gray-500">
-                {formatDate(currentTime)} • {formatTime(currentTime)}
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-200">
-                <span className="text-blue-600 font-medium">
-                  {userName.charAt(0).toUpperCase()}
-                </span>
-              </div>
-            </div>
-          </header> */}
-              <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
-  <div>
-    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">
-      Welcome back, <span className="text-blue-600">{userName}</span>
-    </h1>
-    <p className="text-gray-500">
-      {formatDate(currentTime)} • {formatTime(currentTime)}
-    </p>
-  </div>
-  <div className="flex items-center gap-4">
-    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-200">
-      <span className="text-blue-600 font-medium">
-        {userName.charAt(0).toUpperCase()}
-      </span>
-    </div>
-  </div>
-</header>
+  const handleSelectAllPlants = () => {
+    const allPlantIds = plantList.map(plant => String(plant.plantId || plant.plantid));
+    setFormData(prev => ({
+      ...prev,
+      allowedPlants: prev.allowedPlants.length === allPlantIds.length ? [] : allPlantIds
+    }));
+  };
 
+  const handleClose = () => {
+    onClose?.();
+    navigate('/dashboard');
+  };
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {allowedPanels.map((panel, index) => (
-              <Link
-                to={panel.path}
-                key={index}
-                className="group relative no-underline focus:outline-none transition-transform hover:-translate-y-1"
-              >
-                <div className="h-full rounded-xl p-6 bg-white shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 hover:border-blue-100 flex flex-col">
-                  <div
-                    className={`w-14 h-14 rounded-xl mb-5 flex items-center justify-center ${panel.color} transition-transform duration-300 group-hover:scale-110`}
-                  >
-                    <div className={`${panel.iconColor} transition-colors group-hover:text-blue-600`}>{panel.icon}</div>
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-1">
-                    {panel.name}
-                  </h3>
-                  <p className="text-sm text-gray-500 mb-4">{panel.description}</p>
-                  <div className="mt-auto flex justify-between items-center">
-                    <span className="text-xs font-medium px-2 py-1 rounded bg-gray-50 text-gray-500">
-                      Access module
-                    </span>
-                    <div className="text-gray-300 group-hover:text-blue-400 transition-colors">
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M9 18L15 12L9 6"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-          <footer className="mt-16 pt-8 border-t border-gray-200 text-center text-sm text-gray-500">
-            <p>Lemon Logistics ERP • v2.5 • {new Date().getFullYear()}</p>
-          </footer>
-        </div>
-      </div>
-    );
-  }
+    try {
+      await axios.post(`${API_URL}/api/users`, {
+        ...formData,
+        createdBy: loggedInUsername
+      });
+      
+      toast.success('User created successfully!');
+      setFormData({
+        username: '',
+        password: '',
+        contactNumber: '',
+        moduleRights: [],
+        allowedPlants: [],
+      });
+    } catch (err) {
+      console.error('Error creating user:', err);
+      toast.error(err.response?.data?.message || 'Failed to create user');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  // Mobile View
+  if (!mounted) return null;
+
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 font-sans">
-      <main className="p-4">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-800">
-              Hello, {userName}
-            </h1>
-            <p className="text-xs text-gray-500 mt-1">
-              {currentTime.toLocaleDateString("en-US", {
-                weekday: "short",
-                month: "short",
-                day: "numeric",
-              })}
+    <ErrorBoundary>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-4 md:p-8">
+        <div className="relative bg-white p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-2xl border border-indigo-100">
+          <button
+            onClick={handleClose}
+            className="absolute top-4 right-4 p-2 rounded-full hover:bg-indigo-50 text-gray-500 hover:text-indigo-600 transition-colors"
+            aria-label="Close"
+          >
+            <FiX className="w-5 h-5" />
+          </button>
+
+          {/* Welcome Section */}
+          <div className="flex flex-col items-center mb-8">
+            <h2 className="text-3xl font-bold text-center text-gray-800">
+              Welcome, {usernameDisplay}!
+            </h2>
+            <p className="text-gray-500 text-sm mt-1">
+              You are logged in as: <span className="font-medium text-indigo-700">{roleDisplay}</span>
             </p>
           </div>
-          <div className="text-sm font-medium text-gray-700 bg-white rounded-full px-3 py-1 shadow-sm border border-gray-200">
-            {formatTime(currentTime)}
-          </div>
-        </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          {allowedPanels.map((panel, idx) => (
-            <Link
-              to={panel.path}
-              key={idx}
-              className="no-underline active:scale-95 transition-transform focus:outline-none"
-            >
-              <div className="bg-white rounded-xl p-4 shadow-sm h-full flex flex-col items-center border border-gray-100">
-                <div
-                  className={`w-14 h-14 rounded-xl ${panel.color} flex items-center justify-center mb-3`}
-                >
-                  <div className={panel.iconColor}>{panel.icon}</div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* User Registration Form (Username, Password, etc.) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-1">
+                <label className="font-medium text-gray-700 text-sm">Username</label>
+                <div className="relative">
+                  <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="Enter username"
+                  />
                 </div>
-                <span className="text-sm font-medium text-gray-700 text-center">
-                  {panel.name}
-                </span>
               </div>
-            </Link>
-          ))}
+
+              <div className="flex flex-col gap-1">
+                <label className="font-medium text-gray-700 text-sm">Password</label>
+                <div className="relative">
+                  <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="Enter password"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="font-medium text-gray-700 text-sm">Contact Number</label>
+                <div className="relative">
+                  <FiPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="tel"
+                    name="contactNumber"
+                    value={formData.contactNumber}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="Enter contact number"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Module Rights */}
+            <div>
+              <label className="font-medium text-gray-700 text-sm block mb-2">Module Rights</label>
+              <div className="flex flex-wrap gap-2">
+                {['Admin', 'PlantMaster', 'GateKeeper', 'Report', 'Dispatch', 'Loader', 'UserMaster', 'UserRegister'].map((right) => (
+                  <label 
+                    key={right} 
+                    className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg cursor-pointer transition-all ${
+                      formData.moduleRights.includes(right)
+                        ? 'bg-indigo-600 text-white shadow-md' 
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      name="moduleRights"
+                      value={right}
+                      checked={formData.moduleRights.includes(right)}
+                      onChange={handleChange}
+                      className="hidden"
+                    />
+                    {formData.moduleRights.includes(right) ? <FiCheck className="w-4 h-4" /> : <FiChevronRight className="w-4 h-4" />}
+                    {right}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Allowed Plants */}
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+              <div className="flex justify-between items-center mb-3">
+                <label className="font-medium text-gray-700 text-sm">Allowed Plants</label>
+                <button
+                  type="button"
+                  onClick={handleSelectAllPlants}
+                  className="text-indigo-600 text-xs font-medium hover:underline flex items-center gap-1"
+                >
+                  {formData.allowedPlants.length === plantList.length ? (
+                    <><FiX className="w-3 h-3" /> Deselect All</>
+                  ) : (
+                    <><FiCheck className="w-3 h-3" /> Select All</>
+                  )}
+                </button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2">
+                {plantList.map((plant) => {
+                  const plantId = String(plant.plantId || plant.plantid);
+                  return (
+                    <label 
+                      key={plantId} 
+                      className={`flex items-center gap-2 text-sm p-2 rounded-lg cursor-pointer transition-colors ${
+                        formData.allowedPlants.includes(plantId)
+                          ? 'bg-indigo-50 border border-indigo-200'
+                          : 'hover:bg-gray-100'
+                      }`}
+                    >
+                      <div className={`w-4 h-4 border rounded-sm flex items-center justify-center ${
+                        formData.allowedPlants.includes(plantId)
+                          ? 'bg-indigo-600 border-indigo-600 text-white'
+                          : 'border-gray-300'
+                      }`}>
+                        {formData.allowedPlants.includes(plantId) && <FiCheck className="w-3 h-3" />}
+                      </div>
+                      <input
+                        type="checkbox"
+                        name="allowedPlants"
+                        value={plantId}
+                        checked={formData.allowedPlants.includes(plantId)}
+                        onChange={handleChange}
+                        className="hidden"
+                      />
+                      {plant.plantName || plant.plantname}
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full rounded-lg bg-indigo-600 px-4 py-3 text-white font-medium shadow-md transition-all ${
+                isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-indigo-700 hover:shadow-lg'
+              }`}
+            >
+              {isLoading ? 'Creating User...' : 'Create User'}
+            </button>
+          </form>
         </div>
-      </main>
-
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 flex justify-around items-center p-2 shadow-lg">
-        {allowedNavItems.map((item, index) => (
-          <Link
-            to={item.path}
-            key={index}
-            className="p-2 rounded-full text-gray-500 active:text-gray-700 transition-colors focus:outline-none"
-            aria-label={item.name}
-          >
-            <div className={`p-2 ${item.iconColor}`}>{item.navIcon}</div>
-          </Link>
-        ))}
-      </nav>
-    </div>
+      </div>
+    </ErrorBoundary>
   );
-}  //my fully working code this in finla niche vali design hai
-
+}
