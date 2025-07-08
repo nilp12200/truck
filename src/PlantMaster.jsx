@@ -1160,10 +1160,27 @@ export default function PlantMaster({ onClose }) {
   const [editMode, setEditMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [existingPlants, setExistingPlants] = useState([]);  // To store fetched plant data
+  const [isPlantNameExist, setIsPlantNameExist] = useState(false);
 
   useEffect(() => {
     fetchPlants();
   }, []);
+
+  useEffect(() => {
+  const fetchPlants = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/plants`);  // Replace with your actual API URL
+      setExistingPlants(res.data);  // Save the plant data
+    } catch (err) {
+      console.error('Error fetching plants:', err);
+      toast.error('Failed to load plant data');
+    }
+  };
+  
+  fetchPlants();
+}, []);
+  
 
   const fetchPlants = async () => {
     setIsLoading(true);
@@ -1255,31 +1272,77 @@ export default function PlantMaster({ onClose }) {
     setSelectedPlantId('');
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.plantName.trim()) {
-      toast.error('Plant name is required');
-      return;
-    }
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!formData.plantName.trim()) {
+  //     toast.error('Plant name is required');
+  //     return;
+  //   }
     
-    setIsLoading(true);
-    try {
-      if (formData.plantId) {
-        await axios.put(`${API_URL}/api/plant-master/${formData.plantId}`, formData);
-        toast.success('Plant updated successfully');
-      } else {
-        await axios.post(`${API_URL}/api/plant-master`, formData);
-        toast.success('Plant created successfully');
-      }
-      fetchPlants();
-      handleBack();
-    } catch (err) {
-      console.error('Error saving plant:', err);
-      toast.error('Failed to save plant');
-    } finally {
-      setIsLoading(false);
+  //   setIsLoading(true);
+  //   try {
+  //     if (formData.plantId) {
+  //       await axios.put(`${API_URL}/api/plant-master/${formData.plantId}`, formData);
+  //       toast.success('Plant updated successfully');
+  //     } else {
+  //       await axios.post(`${API_URL}/api/plant-master`, formData);
+  //       toast.success('Plant created successfully');
+  //     }
+  //     fetchPlants();
+  //     handleBack();
+  //   } catch (err) {
+  //     console.error('Error saving plant:', err);
+  //     toast.error('Failed to save plant');
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+    const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  // Step 1: Check if the plant name is empty
+  if (!formData.plantName.trim()) {
+    toast.error('Plant name is required');
+    return;
+  }
+
+  // Step 2: Check if the plant name already exists (excluding the current plant in case of edit)
+  const isExistingPlant = existingPlants.some(
+    (plant) =>
+      plant.plantName.toLowerCase() === formData.plantName.toLowerCase() &&
+      plant.plantId !== formData.plantId // Allow for the current plant being edited
+  );
+
+  if (isExistingPlant) {
+    toast.error('Plant name already exists');
+    return;
+  }
+
+  setIsLoading(true);
+  
+  try {
+    // Step 3: Handle creating or updating a plant
+    if (formData.plantId) {
+      await axios.put(`${API_URL}/api/plant-master/${formData.plantId}`, formData);
+      toast.success('Plant updated successfully');
+    } else {
+      await axios.post(`${API_URL}/api/plant-master`, formData);
+      toast.success('Plant created successfully');
     }
-  };
+
+    // Step 4: Refresh the list of plants and navigate back
+    fetchPlants();
+    handleBack();
+
+  } catch (err) {
+    console.error('Error saving plant:', err);
+    toast.error('Failed to save plant');
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-6">
