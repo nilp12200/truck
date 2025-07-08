@@ -2389,9 +2389,9 @@ export default function TruckSchedule() {
   };
 
   const formatDateTime = (dateTimeStr) => {
-    if (!dateTimeStr) return '—';
+    if (!dateTimeStr) return '—';  // If no date is available, show a placeholder
     const date = new Date(dateTimeStr);
-    return date.toLocaleString();
+    return date.toLocaleString();  // Formats the date to a readable format
   };
 
   return (
@@ -2666,11 +2666,11 @@ export default function TruckSchedule() {
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Check-In</p>
-                        <p className="text-sm">{formatDateTime(item.checkinTime)}</p>
+                        <p className="text-sm">{formatDateTime(item.checkinTime)}</p> {/* Apply formatDateTime */}
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Check-Out</p>
-                        <p className="text-sm">{formatDateTime(item.checkoutTime)}</p>
+                        <p className="text-sm">{formatDateTime(item.checkoutTime)}</p> {/* Apply formatDateTime */}
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Quantity</p>
@@ -2691,3 +2691,4 @@ export default function TruckSchedule() {
     </div>
   );
 }
+
