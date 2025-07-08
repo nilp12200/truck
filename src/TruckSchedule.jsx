@@ -2347,7 +2347,7 @@ export default function TruckSchedule() {
       });
       return;
     }
-    
+
     setLoading(true);
     setError('');
     setStatus(st);
@@ -2394,15 +2394,6 @@ export default function TruckSchedule() {
     return date.toLocaleString();
   };
 
-  // Format for real-time or current time
-  const formatRealTime = (time) => {
-    if (!time) return '—';
-    const now = new Date();
-    const timeDiff = now - new Date(time); // Difference from the real-time
-    const formattedTime = new Date(time);
-    return `${formattedTime.toLocaleDateString()} ${formattedTime.toLocaleTimeString()}`;
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 p-4 md:p-6">
       <ToastContainer
@@ -2428,7 +2419,7 @@ export default function TruckSchedule() {
             <p className="text-gray-600">Track and manage your fleet vehicles</p>
           </div>
         </div>
-        
+
         <CancelButton />
 
         {/* Filters Card */}
@@ -2448,7 +2439,7 @@ export default function TruckSchedule() {
                 />
               </div>
             </div>
-
+            
             <div className="space-y-1">
               <label className="block text-sm font-medium text-gray-700">To Date</label>
               <div className="relative">
@@ -2463,7 +2454,7 @@ export default function TruckSchedule() {
                 />
               </div>
             </div>
-
+            
             <div className="space-y-1">
               <label className="block text-sm font-medium text-gray-700">Truck Number</label>
               <div className="relative">
@@ -2479,64 +2470,224 @@ export default function TruckSchedule() {
                 />
               </div>
             </div>
-
+            
             <div className="flex items-end">
               <button
                 onClick={() => fetchData(status, truckSearch)}
-                className="w-full md:w-auto bg-blue-600 text-white rounded-lg px-6 py-2 flex items-center gap-2 justify-center"
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white py-2 px-4 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2"
               >
-                <FiSearch /> Search
+                {loading ? (
+                  <>
+                    <FiRefreshCw className="animate-spin" />
+                    Searching...
+                  </>
+                ) : (
+                  <>
+                    <FiSearch />
+                    Search Trucks
+                  </>
+                )}
               </button>
             </div>
           </div>
 
-          <div className="mt-4">
-            <div>
+          {/* Status Filters */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {['Dispatched', 'InTransit', 'CheckedOut', 'All'].map(btn => (
               <button
-                onClick={selectAll}
-                className="bg-blue-600 text-white rounded-lg px-4 py-2"
+                key={btn}
+                onClick={() => fetchData(btn, truckSearch)}
+                className={`px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-1 transition-all duration-200 ${
+                  status === btn
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
               >
-                Select All Plants
+                {status === btn ? <FiCheckCircle className="text-white" /> : <FiCheckCircle className="text-gray-500" />}
+                {btn}
               </button>
-              <button
-                onClick={deselectAll}
-                className="bg-red-600 text-white rounded-lg px-4 py-2 ml-4"
-              >
-                Deselect All Plants
-              </button>
-            </div>
+            ))}
           </div>
+
+          {/* Plant Filter Toggle */}
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-sm font-medium text-gray-700">Plant Filters</h3>
+            <button
+              onClick={() => setShowPlantFilter(!showPlantFilter)}
+              className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+            >
+              <FiFilter />
+              {showPlantFilter ? 'Hide Plants' : 'Show Plants'}
+            </button>
+          </div>
+
+          {/* Plant Selection (Collapsible) */}
+          {showPlantFilter && (
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="flex gap-2 mb-3">
+                <button
+                  onClick={selectAll}
+                  className="px-3 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 transition-colors"
+                >
+                  Select All
+                </button>
+                <button
+                  onClick={deselectAll}
+                  className="px-3 py-1 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition-colors"
+                >
+                  Deselect All
+                </button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-60 overflow-y-auto p-1">
+                {plantList.map(p => (
+                  <label key={p.plantid} className="flex items-center gap-2 text-sm p-2 hover:bg-blue-50 rounded transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={selectedPlants.includes(p.plantid.toString())}
+                      onChange={() => togglePlant(p.plantid.toString())}
+                      className="rounded text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="truncate">{p.plantname}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Truck Data Table */}
-        <div className="overflow-hidden bg-white shadow-md rounded-lg border border-gray-100">
-          {loading ? (
-            <div className="p-6 text-center">Loading...</div>
-          ) : error ? (
-            <div className="p-6 text-center text-red-600">{error}</div>
-          ) : (
-            <table className="min-w-full bg-white border-collapse">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-6 py-4 text-left">Truck Number</th>
-                  <th className="px-6 py-4 text-left">Check-In</th>
-                  <th className="px-6 py-4 text-left">Check-Out</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map(item => (
-                  <tr key={item.truckNo} className="border-b">
-                    <td className="px-6 py-4 text-sm text-gray-700">{item.truckNo}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{formatRealTime(item.checkInTime)}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{formatRealTime(item.checkOutTime)}</td>
+        {/* Results Section */}
+        <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 backdrop-blur-sm bg-opacity-90">
+          {/* Loading/Error States */}
+          {loading && (
+            <div className="p-8 flex flex-col items-center justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+              <p className="text-gray-700 font-medium">Loading truck data...</p>
+            </div>
+          )}
+
+          {error && (
+            <div className="p-6 text-center">
+              <div className="inline-flex items-center justify-center bg-red-100 rounded-full p-3 mb-3">
+                <FiXCircle className="text-red-500 text-2xl" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-1">{error}</h3>
+              <p className="text-gray-600">Please try again or check your filters</p>
+              <button
+                onClick={() => fetchData(status, truckSearch)}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          {!loading && !error && data.length === 0 && (
+            <div className="p-8 text-center">
+              <div className="inline-flex items-center justify-center bg-blue-100 rounded-full p-4 mb-4">
+                <FiTruck className="text-blue-500 text-3xl" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-1">No trucks found</h3>
+              <p className="text-gray-600">Adjust your search criteria and try again</p>
+            </div>
+          )}
+
+          {/* Desktop Table */}
+          {!loading && !error && data.length > 0 && (
+            <div className="hidden md:block overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {['Truck No', 'Plant', 'Check-In', 'Check-Out', 'Slip', 'Qty', 'Freight', 'Priority'].map((header) => (
+                      <th
+                        key={header}
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        {header}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {data.map((item, idx) => (
+                    <tr key={idx} className="hover:bg-blue-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 uppercase">
+                        {item.truckNo || '—'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {item.plantName || '—'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatDateTime(item.checkinTime)} {/* Ensure this field is in your data */}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatDateTime(item.checkoutTime)} {/* Ensure this field is in your data */}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {item.loadingSlipNo || '—'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {item.qty || '—'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {item.freight || '—'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {item.priority || '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Mobile Cards */}
+          {!loading && !error && data.length > 0 && (
+            <div className="block md:hidden space-y-4 p-4">
+              {data.map((item, idx) => (
+                <div key={idx} className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                  <div className="p-4 space-y-2">
+                    <div className="flex justify-between items-start">
+                      <h3 className="text-lg font-bold text-blue-600 uppercase">{item.truckNo || '—'}</h3>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {item.priority || 'Standard'}
+                      </span>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <p className="text-xs text-gray-500">Plant</p>
+                        <p className="text-sm font-medium">{item.plantName || '—'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Slip No</p>
+                        <p className="text-sm font-medium">{item.loadingSlipNo || '—'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Check-In</p>
+                        <p className="text-sm">{formatDateTime(item.checkinTime)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Check-Out</p>
+                        <p className="text-sm">{formatDateTime(item.checkoutTime)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Quantity</p>
+                        <p className="text-sm font-medium">{item.qty || '—'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Freight</p>
+                        <p className="text-sm font-medium">{item.freight || '—'}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
     </div>
   );
 }
-
