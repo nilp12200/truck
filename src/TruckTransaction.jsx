@@ -3261,7 +3261,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
-import CancelButton from './CancelButton';
+
 import { FiEdit2, FiTrash2, FiPlus, FiSave, FiTruck } from 'react-icons/fi';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -3524,7 +3524,7 @@ export default function TruckTransaction() {
                 </h1>
                 <p className="text-gray-500 mt-1">Manage truck transportation details</p>
               </div>
-              <CancelButton />
+
             </div>
 
             {/* Truck Information Section */}
