@@ -2259,14 +2259,13 @@
 //     </div>
 //   );
 // }
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiTruck, FiCalendar, FiFilter, FiSearch, FiCheckCircle, FiXCircle, FiRefreshCw } from 'react-icons/fi';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CancelButton from './CancelButton';
-
-
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -2389,12 +2388,6 @@ export default function TruckSchedule() {
     }
   };
 
-  const formatDateTime = (dateTimeStr) => {
-    if (!dateTimeStr) return '—';
-    const date = new Date(dateTimeStr);
-    return date.toLocaleString();
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 p-4 md:p-6">
       <ToastContainer
@@ -2421,7 +2414,7 @@ export default function TruckSchedule() {
             <p className="text-gray-600">Track and manage your fleet vehicles</p>
           </div>
         </div>
-              <CancelButton />
+        <CancelButton />
 
         {/* Filters Card */}
         <div className="bg-white rounded-xl shadow-md p-4 md:p-6 mb-6 border border-gray-100 backdrop-blur-sm bg-opacity-90">
@@ -2619,10 +2612,10 @@ export default function TruckSchedule() {
                         {item.plantName || '—'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDateTime(item.checkInTime)}
+                        {item.checkInTime || '—'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDateTime(item.checkOutTime)}
+                        {item.checkOutTime || '—'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {item.loadingSlipNo || '—'}
@@ -2667,11 +2660,11 @@ export default function TruckSchedule() {
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Check-In</p>
-                        <p className="text-sm">{formatDateTime(item.checkInTime)}</p>
+                        <p className="text-sm">{item.checkInTime || '—'}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Check-Out</p>
-                        <p className="text-sm">{formatDateTime(item.checkOutTime)}</p>
+                        <p className="text-sm">{item.checkOutTime || '—'}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Quantity</p>
