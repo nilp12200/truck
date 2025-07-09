@@ -2088,8 +2088,9 @@ function GateKeeper() {
             />
             {quantityPanels.length > 0 && (
               <div className="absolute top-2 left-2 bg-white bg-opacity-80 px-2 py-1 rounded text-xs font-semibold text-blue-800">
-                Total: {quantityPanels.reduce((acc, p) => acc + (p.quantity || 0), 0)} panels
-              </div>
+  Total: {quantityPanels.reduce((acc, p) => acc + (Number(p.quantity) || 0), 0)} panels
+</div>
+
             )}
           </div>
 
